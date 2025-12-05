@@ -123,7 +123,7 @@
 
 <script>
 // --- PARAMETRELER (TRADER AI) ---
-const AI_PARAMS = { RISK_BIAS_SILVER: 80, RISK_BIAS_NORMAL: 25, THRESHOLD_BASE: 45, THRESHOLD_LOW: 20, ALWAYS_TAKE_SCORE: 35, PANIC_TRIGGER: 10, EARLY_GAME_LIMIT: 16, DISCARD_AGRESSION: 90, DISCARD_COST: 35, PAIR_WEIGHT: 15, SERIES_WEIGHT: 40, GAP_WEIGHT: 15 };
+const AI_PARAMS = { RISK_BIAS_SILVER: 46, RISK_BIAS_NORMAL: 26, THRESHOLD_BASE: 40, THRESHOLD_LOW: 0, ALWAYS_TAKE_SCORE: 30, PANIC_TRIGGER: 12, EARLY_GAME_LIMIT: 8, DISCARD_AGRESSION: 131, DISCARD_COST: 37, PAIR_WEIGHT: 7, SERIES_WEIGHT: 21, GAP_WEIGHT: 10 };
 const COLORS = { r: 'red', y: 'yellow', b: 'blue' };
 const EMOJIS = { r: '❤️', y: '💛', b: '💙' };
 let FULL_DECK = []; ['r','y','b'].forEach(c=>{for(let i=1;i<=8;i++)FULL_DECK.push({id:c+i,color:c,val:i})});
@@ -242,4 +242,5 @@ function endGame() {
 }
 </script>
 </body>
+
 </html>

@@ -2,611 +2,134 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Yapay Zeka destekli Okey analiz ve taktik aracı. En iyi hamleleri öğrenin, kazanma şansınızı artırın.">
-    <title>Okey Ustası - Pro Trader AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metin2 Okey Kart Oyunu - Altın Sandık Botu ve Hesaplayıcı</title>
+    <meta name="description" content="Metin2 Okey Eventi için geliştirilmiş yapay zeka destekli kart sayma ve puan hesaplama aracı. En iyi hamleleri öğrenin, Altın Okey Sandığı kazanma şansınızı artırın.">
+    <meta name="keywords" content="metin2, metin2 okey, okey kart oyunu, okey eventi, okey botu, metin2 okey taktikleri, okey puan hesaplama, altın okey sandığı, gümüş okey sandığı">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.metin2gm.com/" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
     
-    <!-- 
-      === ADSENSE REKLAM KODU BURAYA ===
-      Google AdSense onay aldığında size vereceği kodu buraya yapıştıracaksınız.
-      Örnek: <script async src="https://pagead2.googlesyndication.com/..."></script>
-    -->
-
+    <!-- Google AdSense Kodu Buraya Gelecek -->
+    
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #0f172a; color: #e2e8f0; touch-action: manipulation; }
+        body { font-family: 'Roboto', sans-serif; background-color: #0f172a; color: #cbd5e1; }
+        .hero-bg { background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); }
+        .feature-card { background: #1e293b; border: 1px solid #334155; transition: transform 0.2s; }
+        .feature-card:hover { transform: translateY(-5px); border-color: #60a5fa; }
         
-        /* Reklam Alanı Stili (Yer Tutucu) */
         .ad-placeholder {
-            width: 100%;
-            max-width: 100%;
-            height: 60px; /* Mobilde küçük */
-            background-color: #1e293b;
-            border: 1px dashed #475569;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #64748b;
-            font-size: 0.75rem;
-            border-radius: 8px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-        @media (min-width: 768px) {
-            .ad-placeholder { height: 90px; } /* Masaüstünde büyük banner */
-        }
-
-        /* Kart Tasarımı (Esnek Boyutlandırma) */
-        .card {
-            width: 100%; /* Kapsayıcıya göre genişle */
-            aspect-ratio: 2/3; /* En-boy oranını koru */
-            min-width: 0; /* Flex/Grid taşmasını önle */
-            border-radius: 8px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            font-weight: 900; font-size: clamp(1rem, 4vw, 1.5rem); /* Fontu ekrana göre ayarla */
-            cursor: pointer; position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
-            border: 2px solid rgba(255,255,255,0.1);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            user-select: none;
-            background: linear-gradient(135deg, #334155, #1e293b); /* Default Back */
-        }
-        
-        .card.red { background: linear-gradient(145deg, #ef4444, #991b1b); color: #fee2e2; border-color: #f87171; }
-        .card.yellow { background: linear-gradient(145deg, #eab308, #854d0e); color: #fef9c3; border-color: #facc15; }
-        .card.blue { background: linear-gradient(145deg, #3b82f6, #1e40af); color: #dbeafe; border-color: #60a5fa; }
-
-        .card:active { transform: scale(0.95); }
-        
-        /* Gelişmiş Seçim Efektleri */
-        .card.selected-in-modal {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.8); /* Mavi parlama */
-            border-color: #60a5fa;
-            z-index: 20;
-        }
-        /* Seçim tiki */
-        .card.selected-in-modal::after {
-            content: '✓';
-            position: absolute;
-            top: -6px; right: -6px;
-            background: #2563eb;
-            color: white;
-            border-radius: 50%;
-            width: 16px; height: 16px;
-            font-size: 10px;
+            width: 100%; height: 90px;
+            background: #1e293b; border: 1px dashed #475569;
             display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            border: 2px solid white;
+            color: #64748b; font-size: 0.8rem; margin: 20px 0;
         }
-
-        /* Pasif (Alınmış) Kart Efekti */
-        .card.taken {
-            opacity: 0.25;
-            filter: grayscale(100%);
-            cursor: not-allowed;
-            border: 1px dashed #64748b;
-            background: #0f172a;
-            transform: scale(0.95);
-        }
-        
-        /* AI Önerileri */
-        .suggest-discard { border: 3px solid #ef4444 !important; transform: translateY(-12px); box-shadow: 0 0 20px rgba(239, 68, 68, 0.6); }
-        .suggest-keep { border: 3px solid #22c55e !important; transform: translateY(-12px); box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
-        .opacity-dim { opacity: 0.3; pointer-events: none; filter: grayscale(100%); }
-
-        /* Gridler */
-        .hand-grid { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-        
-        /* Deste Izgarası - Her zaman 8 sütun */
-        .deck-grid { 
-            display: grid; 
-            grid-template-columns: repeat(8, 1fr); 
-            gap: 6px; 
-            padding: 4px;
-            width: 100%;
-        }
-        
-        /* Eldeki kartlar için sabit boyut (Daha şık görünmesi için) */
-        .hand-grid .card {
-            width: 60px;
-            height: 85px;
-            font-size: 1.5rem;
-        }
-
-        /* Mobilde Deste Izgarası İnce Ayar */
-        @media (max-width: 640px) { 
-            .deck-grid { gap: 4px; } 
-            .card.selected-in-modal::after { width: 14px; height: 14px; font-size: 9px; }
-        }
-
-        /* Modal */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: flex; justify-content: center; align-items: center; z-index: 50; visibility: hidden; opacity: 0; transition: opacity 0.2s; }
-        .modal.active { visibility: visible; opacity: 1; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <!-- Üst Bilgi Çubuğu -->
-    <header class="bg-slate-900 border-b border-slate-700 p-3 sticky top-0 z-30 shadow-xl">
-        <div class="max-w-3xl mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 tracking-tight">OKEY<span class="text-white">USTASI</span></h1>
-                <p class="text-[10px] text-slate-500 font-mono tracking-widest">TRADER AI v2.0</p>
-            </div>
-            <div class="flex gap-3 text-center">
-                <div class="bg-slate-800 px-3 py-1 rounded border border-slate-700">
-                    <div class="text-[10px] text-slate-400 font-bold">SKOR</div>
-                    <div class="text-lg font-mono text-white leading-none" id="totalScore">0</div>
-                </div>
-                <div class="bg-slate-800 px-3 py-1 rounded border border-slate-700">
-                    <div class="text-[10px] text-slate-400 font-bold">DESTE</div>
-                    <div class="text-lg font-mono text-blue-400 leading-none" id="deckCount">24</div>
-                </div>
-            </div>
+    <!-- Navigasyon -->
+    <nav class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
+                METİN2<span class="text-white">GM</span>
+            </a>
+            <a href="game.html" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold transition-colors">
+                OYUNA GİT &rarr;
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Bölümü (Ana Başlık) -->
+    <header class="hero-bg py-20 px-4 text-center border-b border-slate-800">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+                Metin2 Okey Kart Oyunu <br>
+                <span class="text-blue-400">Yapay Zeka Asistanı</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 mb-8 max-w-2xl mx-auto">
+                Altın Okey Sandığı kazanmak artık şans değil! Gelişmiş "Trader AI" algoritması ile kartlarınızı analiz edin, en doğru hamleleri yapın ve kazanma oranınızı %90'a çıkarın.
+            </p>
+            <a href="game.html" class="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xl font-bold rounded-xl shadow-lg shadow-blue-500/20 transform hover:scale-105 transition-all">
+                🤖 YAPAY ZEKA İLE OYNA
+            </a>
+            <p class="text-xs text-slate-500 mt-4">Üyelik gerektirmez • %100 Ücretsiz • Mobil Uyumlu</p>
         </div>
     </header>
 
-    <!-- [REKLAM ALANI 1] - Üst Banner -->
-    <div class="w-full px-2 pt-2 flex justify-center">
-        <div class="ad-placeholder max-w-3xl">
-            <span>REKLAM ALANI (Üst Banner)</span>
-            <!-- Google AdSense Kodu Buraya Gelecek -->
-        </div>
+    <!-- Reklam Alanı 1 -->
+    <div class="max-w-6xl mx-auto px-4">
+        <div class="ad-placeholder">REKLAM ALANI (Ana Sayfa Üst)</div>
     </div>
 
-    <main class="flex-grow p-4 flex flex-col items-center justify-start gap-6 max-w-3xl mx-auto w-full">
+    <!-- İçerik Bölümü (SEO İçin Kritik) -->
+    <section class="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
         
-        <!-- Yapay Zeka Paneli -->
-        <div id="aiPanel" class="w-full bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 rounded-2xl p-5 shadow-2xl hidden transform transition-all">
-            <div class="flex items-start gap-4">
-                <div class="text-4xl" id="aiIcon">🤖</div>
-                <div class="flex-1">
-                    <h2 class="text-xl font-bold text-white mb-1" id="aiTitle">Analiz Yapılıyor...</h2>
-                    <p class="text-sm text-slate-300 leading-relaxed" id="aiText">Lütfen bekleyin.</p>
-                </div>
-            </div>
+        <!-- Özellik 1 -->
+        <div class="feature-card p-6 rounded-xl">
+            <div class="text-3xl mb-4">🧠</div>
+            <h3 class="text-xl font-bold text-white mb-2">Akıllı Algoritma</h3>
+            <p class="text-slate-400 text-sm">
+                Sıradan bir sayaç değil. Kartları takip eder, destede kalan olasılıkları hesaplar ve size en yüksek puanı getirecek hamleyi ("Set Yap" veya "Kart At") söyler.
+            </p>
+        </div>
+
+        <!-- Özellik 2 -->
+        <div class="feature-card p-6 rounded-xl">
+            <div class="text-3xl mb-4">💰</div>
+            <h3 class="text-xl font-bold text-white mb-2">Maksimum Kazanç</h3>
+            <p class="text-slate-400 text-sm">
+                Trader Modu sayesinde Gümüş Sandığı (%99) garantilemeye odaklanır, fırsat bulduğunda Altın Sandık için risk alır. Boş oyun bitirmeyi engeller.
+            </p>
+        </div>
+
+        <!-- Özellik 3 -->
+        <div class="feature-card p-6 rounded-xl">
+            <div class="text-3xl mb-4">⚡</div>
+            <h3 class="text-xl font-bold text-white mb-2">Hızlı ve Kolay</h3>
+            <p class="text-slate-400 text-sm">
+                İndirme gerektirmez. Tarayıcınız üzerinden anında çalışır. Metin2 oynarken yan sekmede veya telefonunuzda asistan olarak kullanabilirsiniz.
+            </p>
+        </div>
+
+    </section>
+
+    <!-- SEO Makale Alanı (Google'da Yükselmek İçin) -->
+    <article class="max-w-4xl mx-auto px-4 py-12 border-t border-slate-800">
+        <h2 class="text-2xl font-bold text-white mb-6">Metin2 Okey Eventi Nasıl Oynanır?</h2>
+        
+        <div class="prose prose-invert prose-slate max-w-none">
+            <p class="mb-4">
+                Metin2 dünyasının en sevilen etkinliklerinden biri olan <strong>Okey Kart Oyunu</strong>, doğru strateji ile oyunculara büyük ödüller kazandırır. Canavarlardan düşen Okey Kart Setleri ile masaya oturup 24 kartlık desteyi en verimli şekilde kullanmanız gerekir.
+            </p>
             
-            <!-- Aksiyon Butonu -->
-            <button id="executeBtn" class="mt-4 w-full py-4 rounded-xl font-bold text-white shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
-                <span>HAMLEYİ UYGULA</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-            </button>
+            <h3 class="text-lg font-bold text-blue-400 mt-6 mb-2">Puanlama Sistemi</h3>
+            <ul class="list-disc list-inside space-y-2 mb-4 text-slate-300">
+                <li><strong>Aynı Sayı (Örn: 7-7-7):</strong> Kart değerine göre 20 ile 90 puan arası.</li>
+                <li><strong>Renkli Sıra (Örn: Sarı 5-6-7):</strong> En değerli setlerdir. 50 ile 100 puan arası.</li>
+                <li><strong>Karışık Sıra (Örn: Kırmızı 1, Sarı 2, Mavi 3):</strong> En düşük puanlı setler (10-60 puan).</li>
+            </ul>
+
+            <h3 class="text-lg font-bold text-blue-400 mt-6 mb-2">Neden Okey Botu Kullanmalısınız?</h3>
+            <p>
+                İnsan hafızası 24 kartın hangisinin çıktığını, hangisinin destede kaldığını takip etmekte zorlanabilir. <strong>Metin2GM Okey Hesaplayıcı</strong>, çıkan kartları hafızasında tutar ve kalan kartlarla yapılabilecek en iyi kombinasyonları saniyeler içinde hesaplar. Bu sayede "Acaba 7'liyi atsam mı?" diye düşünmenize gerek kalmaz.
+            </p>
         </div>
+    </article>
 
-        <!-- Kullanıcının Eli -->
-        <div class="w-full">
-            <div class="flex justify-between items-end mb-2 px-2">
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">Mevcut Eliniz</h3>
-                <span class="text-xs text-green-500 font-mono hidden" id="handValueIndicator">Potansiyel: Yüksek</span>
-            </div>
-            <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 min-h-[140px] flex justify-center items-center relative shadow-inner">
-                <div class="hand-grid w-full justify-center" id="myHand">
-                    <button onclick="startHandSelection()" class="px-8 py-4 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-bold shadow-lg shadow-blue-500/20 animate-pulse transition-all">
-                        ✋ Oyuna Başla (5 Kart Seç)
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- [REKLAM ALANI 2] - Oyun İçi Banner -->
-        <div class="w-full">
-            <div class="ad-placeholder">
-                <span>REKLAM ALANI (Oyun İçi)</span>
-                <!-- Google AdSense Kodu Buraya Gelecek -->
-            </div>
-        </div>
-
-        <button onclick="if(confirm('Oyunu sıfırlamak istiyor musunuz?')) window.location.reload()" class="text-xs text-slate-600 hover:text-slate-400 uppercase tracking-widest mt-auto mb-4 p-2">
-            [ SİSTEMİ SIFIRLA ]
-        </button>
-
-    </main>
-
-    <!-- Kart Seçim Modalı -->
-    <div id="cardPickerModal" class="modal backdrop-blur-md">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-5 w-full max-w-lg m-4 shadow-2xl flex flex-col max-h-[90vh]">
-            <div class="text-center mb-4">
-                <h3 class="text-xl text-white font-bold" id="modalTitle">Kart Seçimi</h3>
-                <p class="text-sm text-slate-400" id="modalSubtext">Desteden çektiğiniz kartları işaretleyin. (Soluk kartlar bitmiştir)</p>
-            </div>
-            
-            <div class="overflow-y-auto p-2 flex-grow">
-                <!-- Grid Container -->
-                <div class="deck-grid" id="pickerGrid">
-                    <!-- Kartlar buraya JS ile dolacak -->
-                </div>
-            </div>
-
-            <div class="mt-4 pt-4 border-t border-slate-800">
-                <button id="modalConfirmBtn" class="w-full py-3 bg-slate-700 text-slate-400 rounded-xl font-bold cursor-not-allowed transition-all" disabled>
-                    Seçimi Tamamla (0/0)
-                </button>
-            </div>
-        </div>
+    <!-- Reklam Alanı 2 -->
+    <div class="max-w-6xl mx-auto px-4 mb-12">
+        <div class="ad-placeholder">REKLAM ALANI (Alt Banner)</div>
     </div>
 
-    <!-- Sonuç Modalı -->
-    <div id="resultModal" class="modal">
-        <div class="bg-slate-900 border-2 border-yellow-500/30 rounded-2xl p-8 max-w-sm w-full text-center relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-b from-yellow-500/10 to-transparent"></div>
-            <div class="relative z-10">
-                <div class="text-6xl mb-4 animate-bounce">🏆</div>
-                <h2 class="text-3xl font-black text-white mb-2 tracking-tight">OYUN BİTTİ</h2>
-                <div class="text-sm text-slate-400 mb-6">TOPLAM SKOR</div>
-                <div class="text-6xl font-mono font-bold text-yellow-400 mb-8" id="finalScore">0</div>
-                <div id="rewardText" class="text-xl font-bold mb-8 py-2 px-6 rounded-lg bg-white/10 inline-block border border-white/10"></div>
-                <button onclick="window.location.reload()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold text-white shadow-lg transition-all">
-                    YENİ OYUN
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-8 text-center mt-auto">
+        <p class="text-slate-500 text-sm">
+            © 2024 Metin2GM.com - Metin2 Okey Kart Oyunu Yardımcı Aracı. <br>
+            Bu site Gameforge veya Metin2 ile resmi bir bağlantıya sahip değildir. Fan yapımı bir araçtır.
+        </p>
+    </footer>
 
-<script>
-/**
- * OKEY USTASI - TRADER EDITION (V2.0)
- * Bu algoritma, yapılan eğitimler sonucu "Gümüş Garantili, Altın Fırsatçı" 
- * stratejisine göre optimize edilmiş parametreleri kullanır.
- */
-
-// --- EN İYİ EĞİTİLMİŞ PARAMETRELER ---
-const AI_PARAMS = {
-    RISK_BIAS_SILVER: 80,    // Gümüş altındayken aşırı korumacı
-    RISK_BIAS_NORMAL: 25,    // Gümüş sonrası kontrollü risk
-    THRESHOLD_BASE: 45,      // İdeal set puanı
-    THRESHOLD_LOW: 20,       // Panik/Gümüş kurtarma puanı
-    ALWAYS_TAKE_SCORE: 35,   // Sorgusuz sualsiz alınacak puan (Fırsat)
-    PANIC_TRIGGER: 10,       // 10 kart kalınca panikle
-    EARLY_GAME_LIMIT: 16,    // İlk 3 kartta (19->16) sakin kal
-    DISCARD_AGRESSION: 90,   // Geleceğe %90 güven (Biraz kötümser)
-    DISCARD_COST: 35,        // Kart atmanın maliyeti (Pahalı)
-    PAIR_WEIGHT: 15,         // Çift değeri
-    SERIES_WEIGHT: 40,       // Sıralı değeri
-    GAP_WEIGHT: 15           // Boşluklu değeri
-};
-
-const COLORS = { r: 'red', y: 'yellow', b: 'blue' };
-const EMOJIS = { r: '❤️', y: '💛', b: '💙' };
-
-// Deste Oluşturma
-let FULL_DECK = [];
-['r', 'y', 'b'].forEach(c => {
-    for (let i = 1; i <= 8; i++) {
-        FULL_DECK.push({ id: c + i, color: c, val: i });
-    }
-});
-
-let state = {
-    hand: [],
-    deckRemaining: [...FULL_DECK], // Kopyası
-    totalScore: 0,
-    suggestion: null,
-    tempSelection: [] // Modal seçimleri için geçici hafıza
-};
-
-// --- OYUN MOTORU (CORE LOGIC) ---
-
-function evaluateHandScore(cards) {
-    if (cards.length !== 3) return 0;
-    const s = [...cards].sort((a, b) => a.val - b.val);
-    const [c1, c2, c3] = s;
-
-    // 1. Aynı Sayı (20-90)
-    if (c1.val === c2.val && c2.val === c3.val) return (c1.val - 1) * 10 + 20;
-    
-    // Sıralı Değilse Çık
-    if (!((c1.val + 1 === c2.val) && (c2.val + 1 === c3.val))) return 0;
-
-    // 2. Renkli Sıra (50-120)
-    if (c1.color === c2.color && c2.color === c3.color) return (c1.val - 1) * 10 + 50;
-    
-    // 3. Karışık Sıra (10-80)
-    return (c1.val - 1) * 10 + 10;
-}
-
-function getBestSet(hand) {
-    let best = { s: 0, c: [] };
-    for (let i = 0; i < hand.length; i++)
-        for (let j = i + 1; j < hand.length; j++)
-            for (let k = j + 1; k < hand.length; k++) {
-                const sub = [hand[i], hand[j], hand[k]];
-                const sc = evaluateHandScore(sub);
-                if (sc > best.s) best = { s: sc, c: sub };
-            }
-    return best;
-}
-
-function calculateHandPotential(hand) {
-    let pot = 0;
-    for (let i = 0; i < hand.length; i++) {
-        for (let j = i + 1; j < hand.length; j++) {
-            const c1 = hand[i], c2 = hand[j];
-            if (c1.val === c2.val) pot += AI_PARAMS.PAIR_WEIGHT;
-            else if (c1.color === c2.color) {
-                const diff = Math.abs(c1.val - c2.val);
-                if (diff === 1) pot += AI_PARAMS.SERIES_WEIGHT;
-                else if (diff === 2) pot += AI_PARAMS.GAP_WEIGHT;
-            }
-        }
-    }
-    return pot;
-}
-
-function analyzeMove() {
-    const hand = state.hand;
-    const deck = state.deckRemaining;
-    const bestSet = getBestSet(hand);
-    
-    // EŞİK MANTIĞI
-    let threshold = AI_PARAMS.THRESHOLD_BASE;
-    
-    if (state.totalScore >= 400) {
-        threshold = 0; // Altın cepte, ne varsa al
-    } else if (deck.length > AI_PARAMS.EARLY_GAME_LIMIT) {
-        threshold = AI_PARAMS.THRESHOLD_BASE; // Erken oyun, seçici ol
-    } else if (state.totalScore < 300) {
-        threshold = AI_PARAMS.THRESHOLD_LOW; // Gümüş tehlikede, düşür
-        if (deck.length <= AI_PARAMS.PANIC_TRIGGER) threshold = 0; // Panik!
-    } else {
-        // Gümüş garanti, Altın hedefliyoruz
-        if (deck.length < 5) threshold = 0; // Son düzlük
-    }
-
-    // SET ALMA KARARI
-    let shouldCombine = false;
-    if (bestSet.s > 0) {
-        if (bestSet.s >= threshold) shouldCombine = true;
-        else if (deck.length <= 3) shouldCombine = true;
-        else if (bestSet.s >= AI_PARAMS.ALWAYS_TAKE_SCORE) shouldCombine = true;
-    }
-
-    // DISCARD ANALİZİ (EXPECTIMAX LITE)
-    let bestDiscardIdx = 0;
-    let maxTotalVal = -Infinity;
-    
-    // Tarayıcı performansını korumak için 10 örneklem yeterli
-    const sampleSize = Math.min(10, deck.length);
-    const samples = deck.length > 0 ? Array.from({length: sampleSize}, () => deck[Math.floor(Math.random()*deck.length)]) : [];
-
-    for(let i=0; i<hand.length; i++) {
-        const tempHand = hand.filter((_, idx) => idx !== i);
-        
-        let mcEV = 0;
-        if(samples.length === 0) {
-            mcEV = getBestSet(tempHand).s;
-        } else {
-            let total = 0;
-            for(let card of samples) total += getBestSet([...tempHand, card]).s;
-            mcEV = total / sampleSize;
-        }
-
-        const pot = calculateHandPotential(tempHand);
-        // Formül: (Gelecek * Agresiflik) + Potansiyel - Maliyet
-        const totalVal = (mcEV * (AI_PARAMS.DISCARD_AGRESSION / 100.0)) + pot - AI_PARAMS.DISCARD_COST;
-
-        if(totalVal > maxTotalVal) {
-            maxTotalVal = totalVal;
-            bestDiscardIdx = i;
-        }
-    }
-
-    // RİSK KARARI
-    const bias = (state.totalScore < 300) ? AI_PARAMS.RISK_BIAS_SILVER : AI_PARAMS.RISK_BIAS_NORMAL;
-    
-    if(!shouldCombine && bestSet.s > 0) {
-        // (Gelecek - Mevcut) < Risk => Riske girme, al.
-        if((maxTotalVal - bestSet.s) < bias) {
-            shouldCombine = true;
-        }
-    }
-
-    return shouldCombine 
-        ? { type: 'COMBINE', score: bestSet.s, cards: bestSet.c }
-        : { type: 'DISCARD', score: 0, cards: [hand[bestDiscardIdx]] };
-}
-
-// --- UI İŞLEVLERİ ---
-
-function updateUI(move) {
-    const aiPanel = document.getElementById('aiPanel');
-    const title = document.getElementById('aiTitle');
-    const text = document.getElementById('aiText');
-    const btn = document.getElementById('executeBtn');
-    const icon = document.getElementById('aiIcon');
-    
-    aiPanel.classList.remove('hidden');
-    state.suggestion = move;
-
-    if(move.type === 'COMBINE') {
-        icon.innerText = "💰";
-        title.innerText = `SET FIRSATI (${move.score} PUAN)`;
-        title.className = "text-xl font-bold text-green-400 mb-1";
-        text.innerText = "Risk almaya gerek yok. Bu puanı kasaya atalım.";
-        
-        btn.className = "mt-4 w-full py-4 bg-green-600 hover:bg-green-500 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2";
-        btn.innerHTML = `<span>BİRLEŞTİR VE DEVAM ET</span>`;
-    } else {
-        const c = move.cards[0];
-        icon.innerText = "🗑️";
-        title.innerText = `KARTI AT: ${c.val} ${EMOJIS[c.color]}`;
-        title.className = "text-xl font-bold text-red-400 mb-1";
-        text.innerText = "Bu kart şu an işe yaramıyor. Daha iyisi için değiştirelim.";
-        
-        btn.className = "mt-4 w-full py-4 bg-red-600 hover:bg-red-500 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2";
-        btn.innerHTML = `<span>KARTI AT</span>`;
-    }
-    renderHand();
-}
-
-function renderHand() {
-    const div = document.getElementById('myHand');
-    div.innerHTML = '';
-    
-    state.hand.forEach(c => {
-        const el = document.createElement('div');
-        el.className = `card ${COLORS[c.color]}`; // CSS class mapping
-        el.innerHTML = `${c.val} <span class="text-xs absolute top-1 right-1 opacity-50">${EMOJIS[c.color]}</span>`;
-        
-        if(state.suggestion) {
-            const isTarget = state.suggestion.cards.some(x => x.id === c.id);
-            if(isTarget) {
-                if(state.suggestion.type === 'COMBINE') el.classList.add('suggest-keep');
-                else el.classList.add('suggest-discard');
-            } else if(state.suggestion.type === 'COMBINE') {
-                el.classList.add('opacity-dim');
-            }
-        }
-        div.appendChild(el);
-    });
-    
-    document.getElementById('totalScore').innerText = state.totalScore;
-    document.getElementById('deckCount').innerText = state.deckRemaining.length;
-}
-
-// --- AKILLI SEÇİM MODALI ---
-function renderPicker(targetCount, callback) {
-    const modal = document.getElementById('cardPickerModal');
-    const grid = document.getElementById('pickerGrid');
-    const title = document.getElementById('modalTitle');
-    const sub = document.getElementById('modalSubtext');
-    const confirmBtn = document.getElementById('modalConfirmBtn');
-    
-    grid.innerHTML = '';
-    state.tempSelection = []; 
-    
-    title.innerText = `${targetCount} Kart Seçiniz`;
-    
-    // FULL_DECK üzerinde dön, hepsini göster
-    FULL_DECK.forEach(c => {
-        // Kartın uygunluk durumunu kontrol et
-        // (Destedeyse aktiftir, değilse pasiftir)
-        const isAvailable = state.deckRemaining.some(r => r.id === c.id);
-        
-        const el = document.createElement('div');
-        el.className = `card ${COLORS[c.color]}`;
-        el.innerHTML = `${c.val} <span class="text-xs absolute top-1 right-1 opacity-50">${EMOJIS[c.color]}</span>`;
-        
-        if (!isAvailable) {
-            el.classList.add('taken'); // Pasif stil
-        } else {
-            // Sadece uygun kartlara tıklama özelliği ekle
-            el.onclick = () => {
-                if (state.tempSelection.includes(c)) {
-                    // Varsa çıkar (Toggle Off)
-                    state.tempSelection = state.tempSelection.filter(x => x !== c);
-                    el.classList.remove('selected-in-modal');
-                } else {
-                    // Yoksa ekle (Toggle On) - Limit kontrolüyle
-                    if (state.tempSelection.length < targetCount) {
-                        state.tempSelection.push(c);
-                        el.classList.add('selected-in-modal');
-                    }
-                }
-                updateConfirmButton(targetCount);
-            }
-        }
-        grid.appendChild(el);
-    });
-    
-    updateConfirmButton(targetCount);
-    
-    confirmBtn.onclick = () => {
-        if (state.tempSelection.length === targetCount) {
-            modal.classList.remove('active');
-            callback(state.tempSelection);
-        }
-    };
-    
-    modal.classList.add('active');
-}
-
-function updateConfirmButton(targetCount) {
-    const btn = document.getElementById('modalConfirmBtn');
-    const current = state.tempSelection.length;
-    btn.innerText = `Seçimi Tamamla (${current}/${targetCount})`;
-    
-    if (current === targetCount) {
-        btn.classList.remove('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
-        btn.classList.add('bg-blue-600', 'text-white', 'hover:bg-blue-500');
-        btn.disabled = false;
-    } else {
-        btn.classList.add('bg-slate-700', 'text-slate-400', 'cursor-not-allowed');
-        btn.classList.remove('bg-blue-600', 'text-white', 'hover:bg-blue-500');
-        btn.disabled = true;
-    }
-}
-
-// --- OYUN AKIŞI ---
-
-function startHandSelection() {
-    renderPicker(5, (selectedCards) => {
-        state.hand = selectedCards;
-        state.deckRemaining = state.deckRemaining.filter(c => !selectedCards.includes(c));
-        document.getElementById('myHand').innerHTML = ''; // Butonu temizle
-        updateUI(analyzeMove());
-    });
-}
-
-document.getElementById('executeBtn').onclick = () => {
-    const move = state.suggestion;
-    if(!move) return;
-
-    if(move.type === 'COMBINE') {
-        state.totalScore += move.score;
-        // Kartları elden sil
-        const ids = move.cards.map(x=>x.id);
-        state.hand = state.hand.filter(x=>!ids.includes(x.id));
-        
-        // Yeni kart çekme
-        const needed = Math.min(3, state.deckRemaining.length);
-        if(needed > 0) {
-            renderPicker(needed, (newCards)=>{
-                state.hand.push(...newCards);
-                state.deckRemaining = state.deckRemaining.filter(x=>!newCards.includes(x));
-                updateUI(analyzeMove());
-            });
-        } else {
-            endGame();
-        }
-    } else {
-        // Discard
-        const rm = move.cards[0];
-        state.hand = state.hand.filter(x=>x.id !== rm.id);
-        
-        if(state.deckRemaining.length > 0) {
-            renderPicker(1, (newCards)=>{
-                state.hand.push(...newCards);
-                state.deckRemaining = state.deckRemaining.filter(x=>!newCards.includes(x));
-                updateUI(analyzeMove());
-            });
-        } else {
-            endGame();
-        }
-    }
-}
-
-function endGame() {
-    document.getElementById('resultModal').classList.add('active');
-    document.getElementById('finalScore').innerText = state.totalScore;
-    
-    let txt = "BRONZ SANDIK 📦";
-    let style = "text-orange-400 border-orange-500";
-    
-    if(state.totalScore >= 400) {
-        txt = "ALTIN SANDIK ✨";
-        style = "text-yellow-400 border-yellow-500";
-    }
-    else if(state.totalScore >= 300) {
-        txt = "GÜMÜŞ SANDIK ⛓️";
-        style = "text-slate-300 border-slate-400";
-    }
-    
-    const rewardEl = document.getElementById('rewardText');
-    rewardEl.innerText = txt;
-    rewardEl.className = `text-xl font-bold mb-8 py-2 px-6 rounded-lg bg-white/10 inline-block border ${style}`;
-}
-</script>
 </body>
 </html>

@@ -203,7 +203,7 @@
         input[type=range]::-webkit-slider-runnable-track { 
             width: 100%; 
             height: 4px; 
-            background: linear-gradient(90deg, #374151 0%, #4b5563 100%); 
+            background: linear-gradient(90deg, #22c55e 0%, #fbbf24 50%, #ef4444 100%); 
             border-radius: 2px; 
         }
         
@@ -413,17 +413,24 @@
         
         <div class="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
         
-        <!-- Controls -->
+        <!-- Controls - UPDATED: MCTS 10-1000 -->
         <div class="grid grid-cols-2 gap-3">
             <div class="bg-slate-800/40 p-3 rounded-xl border border-slate-700/50">
                 <div class="flex justify-between text-[9px] uppercase font-bold text-slate-500 mb-2">
                     <span class="flex items-center">
-                        Yapay Zeka Gücü
-                        <span class="help-icon" title="Yüksek değer = Daha akıllı ama yavaş">?</span>
+                        MCTS Derinliği
+                        <span class="help-icon" title="10-1000 arası. Yüksek = Daha akıllı ama yavaş">?</span>
                     </span>
-                    <span id="mctsValue" class="text-amber-400 font-mono">REFLEKS</span>
+                    <span id="mctsValue" class="text-amber-400 font-mono">50</span>
                 </div>
-                <input type="range" id="mctsSlider" min="0" max="150" value="0" step="10" class="w-full cursor-pointer">
+                <input type="range" id="mctsSlider" min="10" max="1000" value="50" step="10" class="w-full cursor-pointer">
+                <div class="flex justify-between text-[8px] text-slate-600 mt-1 px-1">
+                    <span>10</span>
+                    <span>250</span>
+                    <span>500</span>
+                    <span>750</span>
+                    <span>1000</span>
+                </div>
             </div>
             <div class="bg-slate-800/40 p-3 rounded-xl border border-slate-700/50 flex items-center justify-between">
                 <span class="text-[9px] font-bold text-slate-500 uppercase flex items-center">
@@ -488,13 +495,14 @@
         <p>
             Sistem tamamen tarayıcınızda çalışır. <strong>ONNX Runtime</strong> kullanılarak Python'da eğitilen derin öğrenme modeli, web ortamına aktarılmıştır.
             <strong>MCTS (Monte Carlo Tree Search)</strong> algoritması sayesinde yapay zeka, olası hamleleri simüle eder ve risk analizi yapar. 
-            "Zeka Gücü" ayarını artırarak botun düşünme kapasitesini yükseltebilirsiniz.
+            "MCTS Derinliği" ayarını artırarak botun düşünme kapasitesini yükseltebilirsiniz (10-1000 arası).
         </p>
 
         <h2>✨ v3.0 Güncellemeleri (e2460)</h2>
         <p>
             <strong>Yeni özellikler:</strong> Geliştirilmiş hırslı ödül sistemi (350+ puan odaklı), 4 katmanlı ResNet mimarisi, 
             dinamik sıcaklık kontrolü ve öncelikli deneyim tekrarı. AI artık Altın Sandık (400+) hedefine çok daha agresif oynuyor.
+            MCTS derinliği 1000'e kadar çıkarılabilir.
         </p>
     </div>
 
@@ -603,19 +611,28 @@
     }
 
     // ==========================================
-    // SLIDER
+    // SLIDER - UPDATED: 10-1000 range, always MCTS
     // ==========================================
     const mctsSlider = document.getElementById('mctsSlider');
     const mctsValueDisplay = document.getElementById('mctsValue');
     
     mctsSlider.oninput = function() {
         const val = parseInt(this.value);
-        if(val === 0) mctsValueDisplay.innerText = "REFLEKS";
-        else if(val < 50) mctsValueDisplay.innerText = `HIZLI (${val})`;
-        else if(val < 100) mctsValueDisplay.innerText = `NORMAL (${val})`;
-        else mctsValueDisplay.innerText = `DERİN (${val})`;
-        mctsValueDisplay.style.color = val >= 100 ? '#f87171' : '#fbbf24';
+        mctsValueDisplay.innerText = val;
+        
+        // Renk kodlaması
+        if(val <= 50) {
+            mctsValueDisplay.style.color = '#22c55e'; // Yeşil - Hızlı
+        } else if(val <= 200) {
+            mctsValueDisplay.style.color = '#fbbf24'; // Sarı - Normal
+        } else if(val <= 500) {
+            mctsValueDisplay.style.color = '#f97316'; // Turuncu - Yavaş
+        } else {
+            mctsValueDisplay.style.color = '#ef4444'; // Kırmızı - Çok Yavaş
+        }
     }
+    // Initial call
+    mctsSlider.oninput();
 
     // ==========================================
     // SET GENERATION
@@ -662,7 +679,6 @@
     // ==========================================
     async function initAI() {
         try {
-            // Yeni model dosya adı
             onnxSession = await ort.InferenceSession.create('./mt2_e2460.onnx');
             console.log(`✅ AI Hazır! Model: ${MODEL_VERSION}`);
             showToast(`AI Yüklendi (${MODEL_VERSION})`, 'success');
@@ -697,7 +713,7 @@
     }
 
     // ==========================================
-    // AI CORE
+    // AI CORE - UPDATED: Always use MCTS with model
     // ==========================================
     async function askAI(returnMove = false) {
         if (!onnxSession) return;
@@ -705,13 +721,12 @@
         const mctsSims = parseInt(document.getElementById('mctsSlider').value);
 
         if (!isSimulationRunning && !returnMove) {
-            updateAIUI("Hesaplanıyor...", "Yapay zeka düşünüyor...", true);
+            updateAIUI("Hesaplanıyor...", `MCTS ${mctsSims} simülasyon çalışıyor...`, true);
             await new Promise(r => setTimeout(r, 20));
         }
 
-        let bestAction = -1;
-        if (mctsSims > 0) bestAction = await runClientMCTS(mctsSims);
-        else bestAction = await runFastPolicy();
+        // HER ZAMAN MCTS KULLAN (Model-based)
+        let bestAction = await runClientMCTS(mctsSims);
 
         if (returnMove) return bestAction;
 
@@ -801,7 +816,7 @@
     }
 
     // ==========================================
-    // MCTS
+    // MCTS - UPDATED: Pure model-based MCTS
     // ==========================================
     async function runClientMCTS(simulations) {
         let validMoves = [];
@@ -811,74 +826,117 @@
         if (validMoves.length === 0) return -1;
         if (validMoves.length === 1) return validMoves[0];
 
+        // Get policy and value from neural network
         const tensor = createStateTensor(state);
         const results = await onnxSession.run({ input: tensor });
         const policy = results.policy.data;
+        const rootValue = results.value.data[0];
 
-        let moveScores = {};
-        for (let move of validMoves) {
-            let totalSimValue = 0;
-            const simCountForMove = Math.max(2, Math.floor(simulations / validMoves.length));
-
-            for(let k=0; k<simCountForMove; k++) {
-                let simState = JSON.parse(JSON.stringify(state)); 
-                let immediateScore = 0;
-                
-                if(move < 24) { 
-                    simState.hand = simState.hand.filter(c => c.id !== move);
-                    simState.turns++;
-                    if(simState.deckCount > 0) simulateDraw(simState, 1);
-                } else { 
-                    let setInfo = ALL_SETS[move-24];
-                    immediateScore = setInfo.score;
-                    simState.score += immediateScore;
-                    simState.hand = simState.hand.filter(c => !setInfo.ids.includes(c.id));
-                    simState.turns++;
-                    let draw = Math.min(3, simState.deckCount);
-                    if(draw > 0) simulateDraw(simState, draw);
-                }
-
-                const t = createStateTensor(simState);
-                const res = await onnxSession.run({ input: t });
-                let v = res.value.data[0];
-                let scoreImpact = immediateScore / 100.0; 
-                totalSimValue += (v + scoreImpact);
-
-                if (k % 20 === 0) await new Promise(r => setTimeout(r, 0));
+        // MCTS Node structure
+        class MCTSNode {
+            constructor(prior) {
+                this.prior = prior;
+                this.visits = 0;
+                this.valueSum = 0;
+                this.children = {};
             }
             
-            let avgSim = totalSimValue / simCountForMove;
-            let pVal = policy[move];
-            moveScores[move] = (avgSim * 0.7) + (pVal * 0.3);
-        }
-
-        let bestM = validMoves[0];
-        let maxS = -Infinity;
-        for(let m of validMoves) { if(moveScores[m] > maxS) { maxS = moveScores[m]; bestM = m; } }
-        return bestM;
-    }
-
-    async function runFastPolicy() {
-        const tensor = createStateTensor(state);
-        const results = await onnxSession.run({ input: tensor });
-        const policy = results.policy.data;
-        let bestAction = -1; let bestVal = -Infinity; const SET_BONUS_MULTIPLIER = 1.3; 
-
-        for(let i=0; i<24; i++) { 
-            if(state.hand.some(c => c.id === i)) { 
-                if(policy[i] > bestVal) { bestVal = policy[i]; bestAction = i; } 
-            } 
-        }
-        ALL_SETS.forEach((setInfo, idx) => {
-            const actionIdx = 24 + idx;
-            const hasAll = setInfo.ids.every(id => state.hand.some(c => c.id === id));
-            if(hasAll) {
-                let val = policy[actionIdx] * SET_BONUS_MULTIPLIER;
-                if (state.score + setInfo.score >= 400 && state.score < 400) val *= 3.0;
-                if(val > bestVal) { bestVal = val; bestAction = actionIdx; }
+            value() {
+                if (this.visits === 0) return 0;
+                return this.valueSum / this.visits;
             }
-        });
-        return bestAction;
+            
+            ucbScore(parentVisits, cPuct = 2.5) {
+                const prior = this.prior;
+                const u = cPuct * prior * Math.sqrt(parentVisits) / (1 + this.visits);
+                return this.value() + u;
+            }
+        }
+
+        // Initialize root
+        const root = new MCTSNode(1.0);
+        root.visits = 1;
+        
+        // Add valid moves as children with policy priors
+        let policySum = 0;
+        for (const move of validMoves) {
+            policySum += policy[move];
+        }
+        for (const move of validMoves) {
+            root.children[move] = new MCTSNode(policy[move] / (policySum + 1e-8));
+        }
+
+        // Run simulations
+        for (let sim = 0; sim < simulations; sim++) {
+            // Selection: choose best child
+            let bestMove = null;
+            let bestScore = -Infinity;
+            for (const move of validMoves) {
+                const child = root.children[move];
+                const score = child.ucbScore(root.visits);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = move;
+                }
+            }
+            
+            // Expansion & Simulation
+            const child = root.children[bestMove];
+            
+            // Simulate the game state after this move
+            let simState = JSON.parse(JSON.stringify(state));
+            let immediateReward = 0;
+            
+            if (bestMove < 24) {
+                // Discard
+                simState.hand = simState.hand.filter(c => c.id !== bestMove);
+                simState.turns++;
+                if (simState.deckCount > 0) {
+                    simulateDraw(simState, 1);
+                }
+            } else {
+                // Play set
+                const setInfo = ALL_SETS[bestMove - 24];
+                immediateReward = setInfo.score / 100.0;
+                simState.score += setInfo.score;
+                simState.hand = simState.hand.filter(c => !setInfo.ids.includes(c.id));
+                simState.turns++;
+                const drawCount = Math.min(3, simState.deckCount);
+                if (drawCount > 0) {
+                    simulateDraw(simState, drawCount);
+                }
+            }
+            
+            // Get value from neural network for this state
+            const simTensor = createStateTensor(simState);
+            const simResults = await onnxSession.run({ input: simTensor });
+            const leafValue = simResults.value.data[0];
+            
+            // Combine immediate reward with future value
+            const totalValue = immediateReward + leafValue * 0.95; // discount factor
+            
+            // Backpropagation
+            child.visits++;
+            child.valueSum += totalValue;
+            root.visits++;
+            
+            // Yield for UI responsiveness on high simulations
+            if (sim % 50 === 0 && sim > 0) {
+                await new Promise(r => setTimeout(r, 0));
+            }
+        }
+
+        // Select move with highest visit count
+        let bestMove = validMoves[0];
+        let maxVisits = 0;
+        for (const move of validMoves) {
+            if (root.children[move].visits > maxVisits) {
+                maxVisits = root.children[move].visits;
+                bestMove = move;
+            }
+        }
+        
+        return bestMove;
     }
 
     // ==========================================
@@ -904,20 +962,15 @@
         const data = new Float32Array(4 * 3 * 8).fill(0);
         
         // === KANAL 0: Elimdeki Kartlar ===
-        // Eğitimdeki: obs[0, c//8, c%8] = 1.0
-        // c//8 = color (0,1,2), c%8 = value (0-7)
         inpState.hand.forEach(c => { 
-            // Tensor düzeni: [channel][color][value] -> flat index = channel*24 + color*8 + value
             const idx = 0*24 + c.color*8 + (c.val-1); 
             data[idx] = 1.0; 
         });
         
         // === KANAL 1: Set İhtimal Haritası (Heatmap) ===
-        // Eğitimdeki gibi: yapılabilir setlerdeki kartları işaretle
         const handIds = new Set(inpState.hand.map(c => c.id));
         ALL_SETS.forEach((setInfo, i) => {
             if (setInfo.ids.every(id => handIds.has(id))) {
-                // Set tipi: Renk Sıralı=1.0, Aynı Sayı=0.7, Farklı Renk=0.4
                 let heat = 0.4;
                 if (setInfo.type === 'Renk Sıralı') heat = 1.0;
                 else if (setInfo.type === 'Aynı Sayı') heat = 0.7;
@@ -932,12 +985,10 @@
         });
         
         // === KANAL 2: Oyun Durumu (Deste*10 + Skor) / 600 ===
-        // Eğitimdeki: obs[2, :, :] = (len(self.deck) * 10 + self.score) / 600.0
         const gameState = (inpState.deckCount * 10 + inpState.score) / 600.0;
         for(let i=48; i<72; i++) data[i] = gameState;
         
         // === KANAL 3: Turn Sayısı ===
-        // Eğitimdeki: obs[3, :, :] = self.turns / 50.0
         const turnNorm = (inpState.turns || 0) / 50.0;
         for(let i=72; i<96; i++) data[i] = turnNorm;
         

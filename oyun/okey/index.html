@@ -383,7 +383,7 @@
             </svg>
             <div class="model-badge">
                 <span class="dot"></span>
-                <span>v3.0 • e1600</span>
+                <span>v3.0 • e2460</span>
             </div>
         </div>
         
@@ -481,7 +481,7 @@
         <p>
             Metin2 Okey Etkinliği, oyuncuların Altın, Gümüş ve Bronz sandık kazanmak için yarıştığı stratejik bir kart oyunudur. 
             Bu <strong>Okey Botu</strong>, en iyi hamleleri hesaplamak için <strong>AlphaZero</strong> yapay zeka teknolojisini kullanır. 
-            <strong>1600+ epoch</strong> boyunca eğitilen bu AI, elinizdeki ve destedeki kartlara göre en yüksek puanı almanızı sağlar.
+            <strong>2460+ epoch</strong> boyunca eğitilen bu AI, elinizdeki ve destedeki kartlara göre en yüksek puanı almanızı sağlar.
         </p>
 
         <h2>🧠 Bot Nasıl Çalışır?</h2>
@@ -491,7 +491,7 @@
             "Zeka Gücü" ayarını artırarak botun düşünme kapasitesini yükseltebilirsiniz.
         </p>
 
-        <h2>✨ v3.0 Güncellemeleri (e1600)</h2>
+        <h2>✨ v3.0 Güncellemeleri (e2460)</h2>
         <p>
             <strong>Yeni özellikler:</strong> Geliştirilmiş hırslı ödül sistemi (350+ puan odaklı), 4 katmanlı ResNet mimarisi, 
             dinamik sıcaklık kontrolü ve öncelikli deneyim tekrarı. AI artık Altın Sandık (400+) hedefine çok daha agresif oynuyor.
@@ -569,7 +569,7 @@
     // ==========================================
     const COLORS = ['y', 'b', 'r'];
     const ALL_SETS = generateSets();
-    const MODEL_VERSION = "e1600";
+    const MODEL_VERSION = "e2460";
     
     // ==========================================
     // STATE
@@ -663,7 +663,7 @@
     async function initAI() {
         try {
             // Yeni model dosya adı
-            onnxSession = await ort.InferenceSession.create('./mt2_e1600.onnx');
+            onnxSession = await ort.InferenceSession.create('./mt2_e2460.onnx');
             console.log(`✅ AI Hazır! Model: ${MODEL_VERSION}`);
             showToast(`AI Yüklendi (${MODEL_VERSION})`, 'success');
         } catch (e) {

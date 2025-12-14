@@ -8,7 +8,6 @@
     <meta name="description" content="Metin2 Okey Etkinliği için en iyi yapay zeka botu. Kartları otomatik hesaplar, Altın Sandık kazanma şansınızı artırır. Ücretsiz okey simülasyonu ve helper.">
     <meta name="keywords" content="metin2 okey botu, metin2 okey etkinliği, okey helper, metin2 okey simülasyon, metin2 ai, okey kart seti, metin2 hile">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://seninsiten.com" />
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="apple-touch-icon" href="favicon.svg">
@@ -16,15 +15,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9956375486231442"
-     crossorigin="anonymous"></script>
 
     <style>
         :root { 
             --mt2-gold: #ffcc00; 
             --mt2-dark: #0b0f19; 
             --mt2-panel: rgba(20, 25, 40, 0.95); 
-            --glow-gold: 0 0 20px rgba(255, 204, 0, 0.4);
         }
         
         body { 
@@ -36,7 +32,6 @@
             min-height: 100vh;
         }
 
-        /* KART STİLLERİ */
         .card {
             width: 55px; height: 80px; border-radius: 10px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -48,33 +43,26 @@
             border: 2px solid #4a5568;
         }
         .card::before { 
-            content: ''; 
-            position: absolute; 
-            inset: 3px; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 6px;
-            pointer-events: none;
+            content: ''; position: absolute; inset: 3px; 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; pointer-events: none;
         }
         
         .card.y { 
             border-color: #f6e05e; 
             background: linear-gradient(145deg, #d69e2e 0%, #975a16 100%); 
-            color: #fffff0; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: #fffff0; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             box-shadow: 0 4px 15px rgba(214, 158, 46, 0.3);
         }
         .card.b { 
             border-color: #63b3ed; 
             background: linear-gradient(145deg, #3182ce 0%, #2c5282 100%); 
-            color: #ebf8ff; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: #ebf8ff; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3);
         }
         .card.r { 
             border-color: #fc8181; 
             background: linear-gradient(145deg, #e53e3e 0%, #9b2c2c 100%); 
-            color: #fff5f5; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: #fff5f5; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
         }
 
@@ -82,11 +70,9 @@
         .card.selected { 
             transform: translateY(-12px) scale(1.08); 
             box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4); 
-            z-index: 20; 
-            border-color: white; 
+            z-index: 20; border-color: white; 
         }
         
-        /* AI ÖNERİLERİ */
         .card.suggest-discard { 
             animation: pulse-red 0.8s ease-in-out infinite; 
             border: 3px solid #ff4444 !important; 
@@ -101,17 +87,8 @@
             box-shadow: 0 0 20px rgba(72, 187, 120, 0.5);
         }
         
-        .opacity-dim { 
-            opacity: 0.25; 
-            filter: grayscale(80%) blur(1px); 
-            transform: scale(0.92); 
-        }
-        .card.taken { 
-            opacity: 0.15; 
-            filter: grayscale(100%); 
-            pointer-events: none;
-            transform: scale(0.9);
-        }
+        .opacity-dim { opacity: 0.25; filter: grayscale(80%) blur(1px); transform: scale(0.92); }
+        .card.taken { opacity: 0.15; filter: grayscale(100%); pointer-events: none; transform: scale(0.9); }
 
         @keyframes pulse-red { 
             0%, 100% { box-shadow: 0 0 20px rgba(255, 68, 68, 0.4); } 
@@ -122,257 +99,139 @@
             50% { box-shadow: 0 0 25px rgba(72, 187, 120, 0.6); } 
         }
 
-        /* UI BİLEŞENLERİ */
         .glass-panel { 
-            background: var(--mt2-panel); 
-            backdrop-filter: blur(16px); 
+            background: var(--mt2-panel); backdrop-filter: blur(16px); 
             border: 1px solid rgba(255, 215, 0, 0.15); 
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05); 
         }
         .gold-text { 
             background: linear-gradient(180deg, #ffd700 0%, #ff9500 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); 
         }
 
         .mt2-btn { 
             background: linear-gradient(180deg, #374151 0%, #1f2937 100%); 
-            border: 1px solid #4b5563; 
-            color: #d1d5db; 
-            transition: all 0.2s ease; 
-            text-transform: uppercase; 
-            font-size: 0.75rem; 
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
+            border: 1px solid #4b5563; color: #d1d5db; 
+            transition: all 0.2s ease; text-transform: uppercase; 
+            font-size: 0.75rem; letter-spacing: 1px;
+            position: relative; overflow: hidden;
         }
         .mt2-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
+            content: ''; position: absolute; inset: 0;
             background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 50%);
             pointer-events: none;
         }
         .mt2-btn:hover { 
-            border-color: #fbbf24; 
-            color: #fbbf24; 
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
-            transform: translateY(-1px);
+            border-color: #fbbf24; color: #fbbf24; 
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); transform: translateY(-1px);
         }
         .mt2-btn:active { transform: translateY(0); }
         
         .mt2-btn-primary { 
             background: linear-gradient(180deg, #d97706 0%, #92400e 100%); 
-            border: 1px solid #fbbf24; 
-            color: #fff; 
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-            font-weight: 700;
+            border: 1px solid #fbbf24; color: #fff; 
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5); font-weight: 700;
         }
-        .mt2-btn-primary:hover { 
-            filter: brightness(1.15); 
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
-        }
+        .mt2-btn-primary:hover { filter: brightness(1.15); box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
 
         .modal { 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(0,0,0,0.92); 
-            display: none; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 100; 
-            opacity: 0; 
-            transition: opacity 0.3s ease;
-            backdrop-filter: blur(4px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.92); 
+            display: none; justify-content: center; align-items: center; 
+            z-index: 100; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(4px);
         }
         .modal.show { opacity: 1; }
 
-        /* SLIDER */
         input[type=range] { -webkit-appearance: none; background: transparent; }
         input[type=range]::-webkit-slider-thumb { 
-            -webkit-appearance: none; 
-            height: 18px; width: 18px; 
-            border-radius: 50%; 
+            -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; 
             background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%); 
-            cursor: pointer; 
-            margin-top: -7px; 
-            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
-            border: 2px solid #fff;
+            cursor: pointer; margin-top: -7px; 
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); border: 2px solid #fff;
         }
         input[type=range]::-webkit-slider-runnable-track { 
-            width: 100%; 
-            height: 4px; 
+            width: 100%; height: 4px; 
             background: linear-gradient(90deg, #22c55e 0%, #fbbf24 50%, #ef4444 100%); 
             border-radius: 2px; 
         }
         
-        /* TOGGLE */
         .toggle-checkbox:checked { right: 0; border-color: #fbbf24; }
         .toggle-checkbox:checked + .toggle-label { background: linear-gradient(180deg, #d97706 0%, #92400e 100%); }
         
-        /* INFO */
         .info-section { 
-            max-width: 800px; 
-            margin: 2rem auto; 
-            color: #94a3b8; 
-            font-size: 0.85rem; 
-            font-family: system-ui, sans-serif; 
-            line-height: 1.7; 
+            max-width: 800px; margin: 2rem auto; color: #94a3b8; 
+            font-size: 0.85rem; font-family: system-ui, sans-serif; line-height: 1.7; 
         }
         .info-section h2 { 
-            color: #fbbf24; 
-            font-family: 'Cinzel', serif; 
-            font-size: 1.1rem; 
-            margin-bottom: 0.75rem; 
-            margin-top: 2rem; 
-            border-bottom: 1px solid #334155; 
-            padding-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            color: #fbbf24; font-family: 'Cinzel', serif; font-size: 1.1rem; 
+            margin-bottom: 0.75rem; margin-top: 2rem; 
+            border-bottom: 1px solid #334155; padding-bottom: 0.5rem;
         }
 
-        /* REKLAM */
-        .ad-container {
-            width: 100%; max-width: 728px; margin: 1rem auto;
-            background: rgba(0,0,0,0.2); border: 1px dashed #1f2937;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 90px; color: #374151; font-size: 0.7rem;
-            border-radius: 8px; overflow: hidden;
-        }
-
-        /* MODEL BADGE */
         .model-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            display: inline-flex; align-items: center; gap: 6px;
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%);
             border: 1px solid rgba(16, 185, 129, 0.4);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-family: 'Roboto Mono', monospace;
-            color: #34d399;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 0.65rem; font-family: 'Roboto Mono', monospace;
+            color: #34d399; text-transform: uppercase; letter-spacing: 0.5px;
         }
         .model-badge .dot {
-            width: 6px;
-            height: 6px;
-            background: #34d399;
-            border-radius: 50%;
+            width: 6px; height: 6px; background: #34d399; border-radius: 50%;
             animation: blink 2s ease-in-out infinite;
         }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* LOADING SPINNER */
         .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(251, 191, 36, 0.3);
-            border-top-color: #fbbf24;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            width: 20px; height: 20px;
+            border: 2px solid rgba(251, 191, 36, 0.3); border-top-color: #fbbf24;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* TOAST */
         .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
+            position: fixed; bottom: 20px; left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-            border: 1px solid #374151;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            color: #e5e7eb;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            z-index: 200;
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            border: 1px solid #374151; padding: 12px 24px; border-radius: 12px;
+            font-size: 0.85rem; color: #e5e7eb;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 200;
+            opacity: 0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; align-items: center; gap: 10px;
         }
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         .toast.success { border-color: #10b981; }
         .toast.error { border-color: #ef4444; }
         .toast.warning { border-color: #f59e0b; }
 
-        /* GAME END MODAL */
-        .result-card {
-            text-align: center;
-            padding: 2rem;
-        }
-        .result-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            filter: drop-shadow(0 4px 20px currentColor);
-        }
+        .result-card { text-align: center; padding: 2rem; }
+        .result-icon { font-size: 4rem; margin-bottom: 1rem; filter: drop-shadow(0 4px 20px currentColor); }
         .result-gold { color: #fbbf24; }
         .result-silver { color: #9ca3af; }
         .result-bronze { color: #d97706; }
 
-        /* HELP TOOLTIP */
         .help-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 16px;
-            height: 16px;
-            background: rgba(107, 114, 128, 0.3);
-            border-radius: 50%;
-            font-size: 10px;
-            color: #9ca3af;
-            cursor: help;
-            margin-left: 4px;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 16px; height: 16px; background: rgba(107, 114, 128, 0.3);
+            border-radius: 50%; font-size: 10px; color: #9ca3af; cursor: help; margin-left: 4px;
         }
-        .help-icon:hover {
-            background: rgba(107, 114, 128, 0.5);
-            color: #e5e7eb;
-        }
+        .help-icon:hover { background: rgba(107, 114, 128, 0.5); color: #e5e7eb; }
 
-        /* STAT BAR */
-        .stat-bar {
-            height: 4px;
-            background: #1f2937;
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-        .stat-bar-fill {
-            height: 100%;
-            border-radius: 2px;
-            transition: width 0.5s ease;
-        }
+        .stat-bar { height: 4px; background: #1f2937; border-radius: 2px; overflow: hidden; margin-top: 4px; }
+        .stat-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
         .stat-bar-gold { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
         .stat-bar-blue { background: linear-gradient(90deg, #3b82f6, #2563eb); }
     </style>
 </head>
 <body class="flex flex-col items-center min-h-screen p-3 pb-8">
 
-    <!-- Toast Notification -->
     <div id="toast" class="toast">
         <span id="toastIcon">✓</span>
         <span id="toastMsg">Mesaj</span>
     </div>
 
-    <div class="ad-container">
-        <span class="opacity-50">REKLAM ALANI</span>
-    </div>
-
     <!-- HEADER -->
     <header class="w-full max-w-lg flex flex-col gap-3 mb-4 sticky top-2 z-40 glass-panel p-4 rounded-2xl">
-        <!-- Logo & Model Badge -->
         <div class="flex justify-between items-center mb-1">
             <svg width="150" height="32" viewBox="0 0 180 40" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10 20L20 5H30L20 20L30 35H20L10 20Z" fill="#fbbf24" stroke="#92400e" stroke-width="2"/>
@@ -383,11 +242,10 @@
             </svg>
             <div class="model-badge">
                 <span class="dot"></span>
-                <span>v3.0 • e2460</span>
+                <span>v3.1 • e2460</span>
             </div>
         </div>
         
-        <!-- Score & Deck -->
         <div class="flex justify-between items-center px-1">
             <div class="text-center">
                 <div class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1">SKOR</div>
@@ -413,13 +271,12 @@
         
         <div class="h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent"></div>
         
-        <!-- Controls - UPDATED: MCTS 10-1000 -->
         <div class="grid grid-cols-2 gap-3">
             <div class="bg-slate-800/40 p-3 rounded-xl border border-slate-700/50">
                 <div class="flex justify-between text-[9px] uppercase font-bold text-slate-500 mb-2">
                     <span class="flex items-center">
-                        MCTS Derinliği
-                        <span class="help-icon" title="10-1000 arası. Yüksek = Daha akıllı ama yavaş">?</span>
+                        MCTS Simülasyon
+                        <span class="help-icon" title="10-1000 arası. Eğitimdeki gibi MCTS kullanır.">?</span>
                     </span>
                     <span id="mctsValue" class="text-amber-400 font-mono">50</span>
                 </div>
@@ -466,7 +323,6 @@
     <!-- HAND AREA -->
     <div class="w-full max-w-lg flex-grow flex flex-col justify-center">
         <div class="glass-panel rounded-2xl p-6 min-h-[180px] flex justify-center items-center relative overflow-hidden">
-            <!-- Background Pattern -->
             <div class="absolute inset-0 opacity-[0.03] pointer-events-none">
                 <div class="absolute inset-0" style="background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%); background-size: 20px 20px;"></div>
             </div>
@@ -478,31 +334,18 @@
         </div>
     </div>
 
-    <div class="ad-container mt-4">
-        <span class="opacity-50">REKLAM ALANI</span>
-    </div>
-
     <!-- INFO SECTION -->
     <div class="info-section px-4 pb-10">
         <h2>🎮 Metin2 Okey Botu Nedir?</h2>
         <p>
-            Metin2 Okey Etkinliği, oyuncuların Altın, Gümüş ve Bronz sandık kazanmak için yarıştığı stratejik bir kart oyunudur. 
             Bu <strong>Okey Botu</strong>, en iyi hamleleri hesaplamak için <strong>AlphaZero</strong> yapay zeka teknolojisini kullanır. 
-            <strong>2460+ epoch</strong> boyunca eğitilen bu AI, elinizdeki ve destedeki kartlara göre en yüksek puanı almanızı sağlar.
+            Python'da eğitilen model, web ortamına aktarılmıştır. MCTS algoritması eğitimdeki ile <strong>birebir aynıdır</strong>.
         </p>
 
-        <h2>🧠 Bot Nasıl Çalışır?</h2>
+        <h2>🧠 v3.1 - Python MCTS Eşleşmesi</h2>
         <p>
-            Sistem tamamen tarayıcınızda çalışır. <strong>ONNX Runtime</strong> kullanılarak Python'da eğitilen derin öğrenme modeli, web ortamına aktarılmıştır.
-            <strong>MCTS (Monte Carlo Tree Search)</strong> algoritması sayesinde yapay zeka, olası hamleleri simüle eder ve risk analizi yapar. 
-            "MCTS Derinliği" ayarını artırarak botun düşünme kapasitesini yükseltebilirsiniz (10-1000 arası).
-        </p>
-
-        <h2>✨ v3.0 Güncellemeleri (e2460)</h2>
-        <p>
-            <strong>Yeni özellikler:</strong> Geliştirilmiş hırslı ödül sistemi (350+ puan odaklı), 4 katmanlı ResNet mimarisi, 
-            dinamik sıcaklık kontrolü ve öncelikli deneyim tekrarı. AI artık Altın Sandık (400+) hedefine çok daha agresif oynuyor.
-            MCTS derinliği 1000'e kadar çıkarılabilir.
+            <strong>cPUCT = 2.0</strong> (eğitimdeki gibi), Dirichlet noise (α=0.3, weight=0.25), 
+            tam tree search ve backpropagation. Artık web ve Python aynı sonuçları verir.
         </p>
     </div>
 
@@ -542,7 +385,7 @@
                     <div id="simProgressBar" class="bg-gradient-to-r from-amber-500 to-amber-400 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
                 </div>
                 <p class="text-[10px] text-slate-600 mt-2 text-center flex items-center justify-center gap-2">
-                    <div class="spinner" style="width:12px;height:12px;border-width:1.5px;"></div>
+                    <span class="spinner" style="width:12px;height:12px;border-width:1.5px;"></span>
                     AI hesaplıyor...
                 </p>
             </div>
@@ -572,741 +415,940 @@
     </div>
 
 <script>
-    // ==========================================
-    // OYUN SABİTLERİ
-    // ==========================================
-    const COLORS = ['y', 'b', 'r'];
-    const ALL_SETS = generateSets();
-    const MODEL_VERSION = "e2460";
+// ==========================================
+// PYTHON EĞİTİM KODUYLA BİREBİR EŞLEŞEN MCTS
+// ==========================================
+
+const COLORS = ['y', 'b', 'r'];
+const ALL_SETS = generateSets();
+const MODEL_VERSION = "e2460";
+
+// Python'daki sabitler
+const C_PUCT = 2.0;  // Python: u = 2.0 * child.prior * sqrt_n / (1 + child.visits)
+const DIRICHLET_ALPHA = 0.3;  // Python: np.random.dirichlet([0.3] * len(probs))
+const NOISE_WEIGHT = 0.25;  // Python: probs[a] = 0.75 * probs[a] + 0.25 * noise[a]
+
+let state = { hand: [], deckCount: 24, score: 0, usedCards: [], turns: 0 };
+let onnxSession = null;
+let isSimulationRunning = false;
+let gameLoopTimeout = null;
+
+// ==========================================
+// UI HELPERS
+// ==========================================
+function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    const icon = document.getElementById('toastIcon');
+    const msgEl = document.getElementById('toastMsg');
+    toast.className = 'toast ' + type;
+    icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠';
+    msgEl.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function updateBars() {
+    document.getElementById('scoreBar').style.width = Math.min(100, (state.score / 400) * 100) + '%';
+    document.getElementById('deckBar').style.width = (state.deckCount / 24) * 100 + '%';
+}
+
+const mctsSlider = document.getElementById('mctsSlider');
+const mctsValueDisplay = document.getElementById('mctsValue');
+mctsSlider.oninput = function() {
+    const val = parseInt(this.value);
+    mctsValueDisplay.innerText = val;
+    if(val <= 50) mctsValueDisplay.style.color = '#22c55e';
+    else if(val <= 200) mctsValueDisplay.style.color = '#fbbf24';
+    else if(val <= 500) mctsValueDisplay.style.color = '#f97316';
+    else mctsValueDisplay.style.color = '#ef4444';
+}
+mctsSlider.oninput();
+
+// ==========================================
+// SET GENERATION (Python ile aynı)
+// ==========================================
+function generateSets() {
+    let sets = [];
+    const get_id = (c, v) => c * 8 + (v - 1);
     
-    // ==========================================
-    // STATE
-    // ==========================================
-    let state = { hand: [], deckCount: 24, score: 0, usedCards: [], turns: 0 };
-    let onnxSession = null;
-    let isSimulationRunning = false;
-    let gameLoopTimeout = null;
-
-    // ==========================================
-    // UI HELPERS
-    // ==========================================
-    function showToast(msg, type = 'success') {
-        const toast = document.getElementById('toast');
-        const icon = document.getElementById('toastIcon');
-        const msgEl = document.getElementById('toastMsg');
-        
-        toast.className = 'toast ' + type;
-        icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠';
-        msgEl.textContent = msg;
-        
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    function updateBars() {
-        const scoreBar = document.getElementById('scoreBar');
-        const deckBar = document.getElementById('deckBar');
-        scoreBar.style.width = Math.min(100, (state.score / 400) * 100) + '%';
-        deckBar.style.width = (state.deckCount / 24) * 100 + '%';
-    }
-
-    // ==========================================
-    // SLIDER - UPDATED: 10-1000 range, always MCTS
-    // ==========================================
-    const mctsSlider = document.getElementById('mctsSlider');
-    const mctsValueDisplay = document.getElementById('mctsValue');
-    
-    mctsSlider.oninput = function() {
-        const val = parseInt(this.value);
-        mctsValueDisplay.innerText = val;
-        
-        // Renk kodlaması
-        if(val <= 50) {
-            mctsValueDisplay.style.color = '#22c55e'; // Yeşil - Hızlı
-        } else if(val <= 200) {
-            mctsValueDisplay.style.color = '#fbbf24'; // Sarı - Normal
-        } else if(val <= 500) {
-            mctsValueDisplay.style.color = '#f97316'; // Turuncu - Yavaş
-        } else {
-            mctsValueDisplay.style.color = '#ef4444'; // Kırmızı - Çok Yavaş
-        }
-    }
-    // Initial call
-    mctsSlider.oninput();
-
-    // ==========================================
-    // SET GENERATION
-    // ==========================================
-    function generateSets() {
-        let sets = [];
-        const get_id = (c, v) => c * 8 + (v - 1);
-        
-        // Color Run
-        for (let c=0; c<3; c++) {
-            for (let v=1; v<=6; v++) {
-                sets.push({ 
-                    ids: [get_id(c,v), get_id(c,v+1), get_id(c,v+2)].sort((a,b)=>a-b), 
-                    type: 'Renk Sıralı', 
-                    score: (v-1)*10+50 
-                });
-            }
-        }
-        
-        // Same Value
-        for (let v=1; v<=8; v++) {
-            sets.push({ 
-                ids: [get_id(0,v), get_id(1,v), get_id(2,v)].sort((a,b)=>a-b), 
-                type: 'Aynı Sayı', 
-                score: (v-1)*10+20 
-            });
-        }
-        
-        // Diff Run
-        const perms = [[0,1,2], [0,2,1], [1,0,2], [1,2,0], [2,0,1], [2,1,0]];
+    // Color Run - Python: CardSet.SET_TYPES.append(0)
+    for (let c=0; c<3; c++) {
         for (let v=1; v<=6; v++) {
-            for (let p of perms) {
-                let ids = [get_id(p[0], v), get_id(p[1], v+1), get_id(p[2], v+2)].sort((a,b)=>a-b);
-                if (!sets.some(s => s.ids.join() === ids.join())) {
-                    sets.push({ ids: ids, type: 'Farklı Renk Seri', score: (v-1)*10+10 });
-                }
+            sets.push({ 
+                ids: [get_id(c,v), get_id(c,v+1), get_id(c,v+2)].sort((a,b)=>a-b), 
+                type: 0, // Color Run
+                typeName: 'Renk Sıralı',
+                score: (v-1)*10+50 
+            });
+        }
+    }
+    
+    // Same Value - Python: CardSet.SET_TYPES.append(1)
+    for (let v=1; v<=8; v++) {
+        sets.push({ 
+            ids: [get_id(0,v), get_id(1,v), get_id(2,v)].sort((a,b)=>a-b), 
+            type: 1, // Same Value
+            typeName: 'Aynı Sayı',
+            score: (v-1)*10+20 
+        });
+    }
+    
+    // Diff Run - Python: CardSet.SET_TYPES.append(2)
+    const perms = [[0,1,2], [0,2,1], [1,0,2], [1,2,0], [2,0,1], [2,1,0]];
+    for (let v=1; v<=6; v++) {
+        for (let p of perms) {
+            let ids = [get_id(p[0], v), get_id(p[1], v+1), get_id(p[2], v+2)].sort((a,b)=>a-b);
+            if (!sets.some(s => s.ids.join() === ids.join())) {
+                sets.push({ 
+                    ids: ids, 
+                    type: 2, // Diff Run
+                    typeName: 'Farklı Renk Seri',
+                    score: (v-1)*10+10 
+                });
             }
         }
-        return sets;
     }
+    return sets;
+}
 
-    // ==========================================
-    // AI INITIALIZATION
-    // ==========================================
-    async function initAI() {
-        try {
-            onnxSession = await ort.InferenceSession.create('./mt2_e2460.onnx');
-            console.log(`✅ AI Hazır! Model: ${MODEL_VERSION}`);
-            showToast(`AI Yüklendi (${MODEL_VERSION})`, 'success');
-        } catch (e) {
-            console.error(e);
-            showToast("Model yüklenemedi!", 'error');
-        }
+// ==========================================
+// AI INITIALIZATION
+// ==========================================
+async function initAI() {
+    try {
+        onnxSession = await ort.InferenceSession.create('./mt2_e2460.onnx');
+        console.log(`✅ AI Hazır! Model: ${MODEL_VERSION}`);
+        showToast(`AI Yüklendi (${MODEL_VERSION})`, 'success');
+    } catch (e) {
+        console.error(e);
+        showToast("Model yüklenemedi!", 'error');
     }
-    initAI();
+}
+initAI();
 
-    // ==========================================
-    // GAME MANAGEMENT
-    // ==========================================
-    function resetGameUI() {
-        clearTimeout(gameLoopTimeout);
-        state = { hand: [], deckCount: 24, score: 0, usedCards: [], turns: 0 };
-        document.getElementById('aiPanel').classList.add('hidden');
-        updateBars();
-        renderHand(); 
-        const handDiv = document.getElementById('myHand');
-        handDiv.innerHTML = `
-            <button id="startGameBtn" onclick="openPicker(5)" class="mt2-btn-primary px-10 py-5 rounded-2xl font-bold text-white shadow-2xl tracking-widest text-base flex items-center gap-3 hover:scale-105 transition-transform">
-                <span class="text-2xl">🎴</span> OYUNU BAŞLAT
-            </button>
-        `;
+// ==========================================
+// GAME STATE (Python MT2Game ile eşleşen)
+// ==========================================
+class GameState {
+    constructor() {
+        this.hand = [];      // Python: self.hand
+        this.deck = [];      // Python: self.deck
+        this.score = 0;      // Python: self.score
+        this.turns = 0;      // Python: self.turns
+        this.gameOver = false;
     }
-
-    function nextTurn(drawCount) {
-        if (isSimulationRunning) return; 
-        if(state.deckCount > 0) openPicker(drawCount); 
-        else checkEndGame();
-    }
-
-    // ==========================================
-    // AI CORE - UPDATED: Always use MCTS with model
-    // ==========================================
-    async function askAI(returnMove = false) {
-        if (!onnxSession) return;
+    
+    static fromUIState(uiState) {
+        const g = new GameState();
+        g.hand = uiState.hand.map(c => c.id);
+        g.hand.sort((a,b) => a-b);
         
-        const mctsSims = parseInt(document.getElementById('mctsSlider').value);
-
-        if (!isSimulationRunning && !returnMove) {
-            updateAIUI("Hesaplanıyor...", `MCTS ${mctsSims} simülasyon çalışıyor...`, true);
-            await new Promise(r => setTimeout(r, 20));
-        }
-
-        // HER ZAMAN MCTS KULLAN (Model-based)
-        let bestAction = await runClientMCTS(mctsSims);
-
-        if (returnMove) return bestAction;
-
-        updateAIUI("Analiz Tamam", "En iyi hamle bulundu.", false);
-        renderHand(); 
-
-        const btn = document.getElementById('executeBtn');
-
-        if (bestAction < 24) {
-            const c = getCardObj(bestAction);
-            updateAIUI("KART AT", `Bu kartı elden çıkar`, false, `${c.val} ${getColorEmoji(c.color)}`);
-            highlightCards([bestAction], 'discard');
-            
-            btn.onclick = () => {
-                state.hand = state.hand.filter(x => x.id !== bestAction);
-                state.turns++;
-                document.getElementById('aiPanel').classList.add('hidden');
-                renderHand();
-                nextTurn(1); 
-            };
-        } else {
-            const setIdx = bestAction - 24;
-            const setInfo = ALL_SETS[setIdx];
-            const cardsStr = setInfo.ids.map(id => {
-                const c = getCardObj(id);
-                return `${c.val}${getColorEmoji(c.color)}`;
-            }).join(" ");
-            
-            updateAIUI("SET YAP", `${setInfo.type} (+${setInfo.score} Puan)`, false, cardsStr);
-            highlightCards(setInfo.ids, 'keep');
-            
-            btn.onclick = () => {
-                state.score += setInfo.score;
-                state.hand = state.hand.filter(x => !setInfo.ids.includes(x.id));
-                state.turns++;
-                document.getElementById('aiPanel').classList.add('hidden');
-                renderHand();
-                const drawNeed = Math.min(3, state.deckCount);
-                if(drawNeed > 0) nextTurn(drawNeed);
-                else checkEndGame(); 
-            };
-        }
-    }
-
-    function updateAIUI(title, desc, loading, details="") {
-        const panel = document.getElementById('aiPanel');
-        const tEl = document.getElementById('aiTitle');
-        const dEl = document.getElementById('aiDesc');
-        const detEl = document.getElementById('aiDetails');
-        const btn = document.getElementById('executeBtn');
-        const icon = document.getElementById('aiIcon');
-        const spinner = document.getElementById('aiSpinner');
-
-        panel.classList.remove('hidden');
-        tEl.childNodes[0].textContent = title + " ";
-        dEl.innerText = desc;
-        detEl.innerText = details;
-
-        if (loading) {
-            btn.disabled = true;
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
-            tEl.className = "text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2";
-            icon.textContent = "🔮";
-            spinner.classList.remove('hidden');
-        } else {
-            btn.disabled = false;
-            btn.classList.remove('opacity-50', 'cursor-not-allowed');
-            spinner.classList.add('hidden');
-            
-            if(title.includes("AT")) {
-                tEl.className = "text-sm font-bold text-red-400 uppercase tracking-wider flex items-center gap-2";
-                icon.textContent = "🗑️";
-                panel.classList.remove('border-l-amber-500', 'border-l-green-500');
-                panel.classList.add('border-l-red-500');
-            } else if(title.includes("SET")) {
-                tEl.className = "text-sm font-bold text-green-400 uppercase tracking-wider flex items-center gap-2";
-                icon.textContent = "⭐";
-                panel.classList.remove('border-l-amber-500', 'border-l-red-500');
-                panel.classList.add('border-l-green-500');
-            } else {
-                tEl.className = "text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2";
-                icon.textContent = "🔮";
-                panel.classList.remove('border-l-red-500', 'border-l-green-500');
-                panel.classList.add('border-l-amber-500');
+        // Deck'i oluştur (kullanılmamış kartlar)
+        g.deck = [];
+        for (let i = 0; i < 24; i++) {
+            if (!uiState.usedCards.includes(i)) {
+                g.deck.push(i);
             }
         }
-    }
-
-    // ==========================================
-    // MCTS - UPDATED: Pure model-based MCTS
-    // ==========================================
-    async function runClientMCTS(simulations) {
-        let validMoves = [];
-        for(let i=0; i<24; i++) if(state.hand.some(c => c.id === i)) validMoves.push(i);
-        ALL_SETS.forEach((s, i) => { if(s.ids.every(id => state.hand.some(c => c.id === id))) validMoves.push(24+i); });
-
-        if (validMoves.length === 0) return -1;
-        if (validMoves.length === 1) return validMoves[0];
-
-        // Get policy and value from neural network
-        const tensor = createStateTensor(state);
-        const results = await onnxSession.run({ input: tensor });
-        const policy = results.policy.data;
-        const rootValue = results.value.data[0];
-
-        // MCTS Node structure
-        class MCTSNode {
-            constructor(prior) {
-                this.prior = prior;
-                this.visits = 0;
-                this.valueSum = 0;
-                this.children = {};
-            }
-            
-            value() {
-                if (this.visits === 0) return 0;
-                return this.valueSum / this.visits;
-            }
-            
-            ucbScore(parentVisits, cPuct = 2.5) {
-                const prior = this.prior;
-                const u = cPuct * prior * Math.sqrt(parentVisits) / (1 + this.visits);
-                return this.value() + u;
-            }
-        }
-
-        // Initialize root
-        const root = new MCTSNode(1.0);
-        root.visits = 1;
-        
-        // Add valid moves as children with policy priors
-        let policySum = 0;
-        for (const move of validMoves) {
-            policySum += policy[move];
-        }
-        for (const move of validMoves) {
-            root.children[move] = new MCTSNode(policy[move] / (policySum + 1e-8));
-        }
-
-        // Run simulations
-        for (let sim = 0; sim < simulations; sim++) {
-            // Selection: choose best child
-            let bestMove = null;
-            let bestScore = -Infinity;
-            for (const move of validMoves) {
-                const child = root.children[move];
-                const score = child.ucbScore(root.visits);
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestMove = move;
-                }
-            }
-            
-            // Expansion & Simulation
-            const child = root.children[bestMove];
-            
-            // Simulate the game state after this move
-            let simState = JSON.parse(JSON.stringify(state));
-            let immediateReward = 0;
-            
-            if (bestMove < 24) {
-                // Discard
-                simState.hand = simState.hand.filter(c => c.id !== bestMove);
-                simState.turns++;
-                if (simState.deckCount > 0) {
-                    simulateDraw(simState, 1);
-                }
-            } else {
-                // Play set
-                const setInfo = ALL_SETS[bestMove - 24];
-                immediateReward = setInfo.score / 100.0;
-                simState.score += setInfo.score;
-                simState.hand = simState.hand.filter(c => !setInfo.ids.includes(c.id));
-                simState.turns++;
-                const drawCount = Math.min(3, simState.deckCount);
-                if (drawCount > 0) {
-                    simulateDraw(simState, drawCount);
-                }
-            }
-            
-            // Get value from neural network for this state
-            const simTensor = createStateTensor(simState);
-            const simResults = await onnxSession.run({ input: simTensor });
-            const leafValue = simResults.value.data[0];
-            
-            // Combine immediate reward with future value
-            const totalValue = immediateReward + leafValue * 0.95; // discount factor
-            
-            // Backpropagation
-            child.visits++;
-            child.valueSum += totalValue;
-            root.visits++;
-            
-            // Yield for UI responsiveness on high simulations
-            if (sim % 50 === 0 && sim > 0) {
-                await new Promise(r => setTimeout(r, 0));
-            }
-        }
-
-        // Select move with highest visit count
-        let bestMove = validMoves[0];
-        let maxVisits = 0;
-        for (const move of validMoves) {
-            if (root.children[move].visits > maxVisits) {
-                maxVisits = root.children[move].visits;
-                bestMove = move;
-            }
-        }
-        
-        return bestMove;
-    }
-
-    // ==========================================
-    // HELPERS
-    // ==========================================
-    function simulateDraw(simState, count) {
-        let available = [];
-        for(let i=0; i<24; i++) if(!simState.usedCards.includes(i)) available.push(i);
-        for (let i = available.length - 1; i > 0; i--) {
+        // Shuffle deck
+        for (let i = g.deck.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [available[i], available[j]] = [available[j], available[i]];
+            [g.deck[i], g.deck[j]] = [g.deck[j], g.deck[i]];
         }
-        for(let k=0; k<count && k<available.length; k++) {
-            let id = available[k];
-            simState.hand.push({id: id, color: Math.floor(id/8), val: (id%8)+1});
-            simState.usedCards.push(id);
-        }
-        simState.deckCount = Math.max(0, simState.deckCount - count);
+        
+        g.score = uiState.score;
+        g.turns = uiState.turns;
+        g.gameOver = false;
+        return g;
     }
-
-    function createStateTensor(inpState) {
-        // 4 kanal x 3 renk x 8 değer = 96 eleman
-        const data = new Float32Array(4 * 3 * 8).fill(0);
-        
-        // === KANAL 0: Elimdeki Kartlar ===
-        inpState.hand.forEach(c => { 
-            const idx = 0*24 + c.color*8 + (c.val-1); 
-            data[idx] = 1.0; 
-        });
-        
-        // === KANAL 1: Set İhtimal Haritası (Heatmap) ===
-        const handIds = new Set(inpState.hand.map(c => c.id));
-        ALL_SETS.forEach((setInfo, i) => {
-            if (setInfo.ids.every(id => handIds.has(id))) {
-                let heat = 0.4;
-                if (setInfo.type === 'Renk Sıralı') heat = 1.0;
-                else if (setInfo.type === 'Aynı Sayı') heat = 0.7;
-                
-                setInfo.ids.forEach(cardId => {
-                    const color = Math.floor(cardId / 8);
-                    const value = cardId % 8;
-                    const idx = 1*24 + color*8 + value;
-                    data[idx] = Math.max(data[idx], heat);
-                });
-            }
-        });
-        
-        // === KANAL 2: Oyun Durumu (Deste*10 + Skor) / 600 ===
-        const gameState = (inpState.deckCount * 10 + inpState.score) / 600.0;
-        for(let i=48; i<72; i++) data[i] = gameState;
-        
-        // === KANAL 3: Turn Sayısı ===
-        const turnNorm = (inpState.turns || 0) / 50.0;
-        for(let i=72; i<96; i++) data[i] = turnNorm;
-        
-        return new ort.Tensor('float32', data, [1, 4, 3, 8]);
+    
+    clone() {
+        const n = new GameState();
+        n.hand = [...this.hand];
+        n.deck = [...this.deck];
+        n.score = this.score;
+        n.turns = this.turns;
+        n.gameOver = this.gameOver;
+        return n;
     }
-
-    function getCardObj(id) { return { id: id, color: Math.floor(id / 8), val: (id % 8) + 1 }; }
-    function getColorClass(c) { return ['y', 'b', 'r'][c]; }
-    function getColorEmoji(c) { return ['💛', '💙', '❤️'][c]; }
-
-    function renderHand() {
-        if(isSimulationRunning) return;
-        const div = document.getElementById('myHand');
-        div.innerHTML = '';
-        state.hand.sort((a,b)=>a.id-b.id).forEach(c => {
-            const el = document.createElement('div');
-            el.className = `card ${getColorClass(c.color)}`;
-            el.innerText = c.val;
-            el.dataset.id = c.id;
-            div.appendChild(el);
-        });
-        document.getElementById('scoreDisplay').innerText = state.score;
-        document.getElementById('deckDisplay').innerText = state.deckCount;
-        updateBars();
-    }
-
-    function highlightCards(targetIds, type) {
-        if(isSimulationRunning) return;
-        const allCards = document.querySelectorAll('#myHand .card');
-        allCards.forEach(c => c.classList.remove('suggest-keep', 'suggest-discard', 'opacity-dim'));
-        targetIds.forEach(id => {
-            const el = document.querySelector(`#myHand .card[data-id="${id}"]`);
-            if (el) {
-                if (type === 'discard') el.classList.add('suggest-discard');
-                else el.classList.add('suggest-keep');
-            }
-        });
-        if (type === 'keep') {
-            allCards.forEach(c => {
-                if (!c.classList.contains('suggest-keep') && !c.classList.contains('suggest-discard')) {
-                    c.classList.add('opacity-dim');
+    
+    // Python: get_valid_actions()
+    getValidActions() {
+        if (this.gameOver) return [];
+        
+        const actions = [];
+        const handSet = new Set(this.hand);
+        
+        // Python: if not self.deck: (sadece set yapma)
+        if (this.deck.length === 0) {
+            for (let i = 0; i < ALL_SETS.length; i++) {
+                if (ALL_SETS[i].ids.every(c => handSet.has(c))) {
+                    actions.push(24 + i);
                 }
-            });
-        }
-    }
-
-    function canAnySetBeMade() {
-        return ALL_SETS.some(setInfo => setInfo.ids.every(id => state.hand.some(c => c.id === id)));
-    }
-
-    // ==========================================
-    // CARD PICKER
-    // ==========================================
-    let pickerSelection = [];
-    let pickerTarget = 0;
-
-    function drawRandomCards(count) {
-        let availableIds = [];
-        for(let i=0; i<24; i++) if(!state.usedCards.includes(i)) availableIds.push(i);
-        availableIds.sort(() => Math.random() - 0.5);
-        availableIds.slice(0, count).forEach(id => {
-            state.hand.push(getCardObj(id));
-            state.usedCards.push(id);
-        });
-        state.deckCount = Math.max(0, state.deckCount - count);
-        if(!isSimulationRunning) {
-            renderHand();
-            gameLoopTimeout = setTimeout(askAI, 300);
-        }
-    }
-
-    function openPicker(count) {
-        const isAuto = document.getElementById('autoDrawToggle').checked;
-        if(isAuto) { drawRandomCards(count); return; }
-
-        pickerTarget = count;
-        pickerSelection = [];
-        const modal = document.getElementById('pickerModal');
-        const grid = document.getElementById('pickerGrid');
-        const title = document.getElementById('pickerTitle');
-        
-        modal.style.display = 'flex';
-        setTimeout(() => modal.classList.add('show'), 10);
-
-        title.innerText = `${count} KART SEÇ`;
-        grid.innerHTML = '';
-        
-        for(let i=0; i<24; i++) {
-            const c = getCardObj(i);
-            const isUnavailable = state.usedCards.includes(i);
-            const el = document.createElement('div');
-            el.className = `card ${getColorClass(c.color)} text-xs h-12 w-full`;
-            el.innerText = c.val;
-            
-            if(isUnavailable) {
-                el.classList.add('taken'); 
-            } else {
-                el.onclick = () => {
-                    if(el.classList.contains('selected')) {
-                        el.classList.remove('selected');
-                        pickerSelection = pickerSelection.filter(x => x !== i);
-                    } else if(pickerSelection.length < pickerTarget) {
-                        el.classList.add('selected');
-                        pickerSelection.push(i);
-                    }
-                    updatePickerBtn();
-                };
             }
-            grid.appendChild(el);
-        }
-        updatePickerBtn();
-    }
-
-    function closeModal(id) {
-        const m = document.getElementById(id);
-        m.classList.remove('show');
-        setTimeout(() => m.style.display = 'none', 300);
-    }
-
-    function updatePickerBtn() {
-        const btn = document.getElementById('pickerConfirm');
-        btn.innerText = `SEÇİMİ TAMAMLA (${pickerSelection.length}/${pickerTarget})`;
-        if(pickerSelection.length === pickerTarget) {
-            btn.disabled = false;
-            btn.classList.remove('bg-slate-700', 'text-slate-500', 'cursor-not-allowed');
-            btn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-500');
-            btn.onclick = () => {
-                pickerSelection.forEach(id => {
-                    state.hand.push(getCardObj(id));
-                    state.usedCards.push(id); 
-                });
-                state.deckCount = Math.max(0, state.deckCount - pickerTarget);
-                closeModal('pickerModal');
-                renderHand();
-                askAI(); 
-            };
         } else {
-            btn.disabled = true;
-            btn.classList.add('bg-slate-700', 'text-slate-500', 'cursor-not-allowed');
-            btn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-500');
-        }
-    }
-
-    // ==========================================
-    // SIMULATION
-    // ==========================================
-    function openSimModal() { 
-        document.getElementById('simModal').style.display = 'flex'; 
-        setTimeout(() => document.getElementById('simModal').classList.add('show'), 10);
-    }
-    function closeSimModal() { closeModal('simModal'); }
-
-    async function startSimulation() {
-        if (!onnxSession) { showToast("Model hazır değil!", 'error'); return; }
-        
-        const count = parseInt(document.getElementById('simCount').value);
-        if(count < 1 || count > 50) { showToast("1-50 arası oyun seçin", 'warning'); return; }
-
-        isSimulationRunning = true;
-        document.getElementById('startSimBtn').disabled = true;
-        document.getElementById('simProgress').classList.remove('hidden');
-        document.getElementById('simResults').classList.add('hidden');
-
-        let totalScore = 0;
-        let silverCount = 0; 
-        let goldCount = 0;   
-        let bronzeCount = 0;
-
-        for(let i=0; i<count; i++) {
-            const pct = Math.round(((i) / count) * 100);
-            document.getElementById('simProgressBar').style.width = `${pct}%`;
-            document.getElementById('simProgressText').innerText = `${i+1}/${count}`;
-            
-            const gameScore = await playSingleGame();
-            totalScore += gameScore;
-            
-            if(gameScore >= 400) goldCount++;
-            else if(gameScore >= 300) silverCount++;
-            else bronzeCount++; 
-            
-            await new Promise(r => setTimeout(r, 10));
-        }
-
-        isSimulationRunning = false;
-        document.getElementById('simProgressBar').style.width = `100%`;
-        document.getElementById('startSimBtn').disabled = false;
-        
-        const avg = (totalScore / count).toFixed(1);
-        const resultsDiv = document.getElementById('simResults');
-        resultsDiv.innerHTML = `
-            <div class="flex justify-between border-b border-slate-700 pb-2 mb-3">
-                <span class="text-slate-500">Oyun Sayısı</span> 
-                <span class="text-white font-bold">${count}</span>
-            </div>
-            <div class="flex justify-between border-b border-slate-700 pb-2 mb-3">
-                <span class="text-slate-500">Ortalama Skor</span> 
-                <span class="text-amber-400 font-bold text-lg">${avg}</span>
-            </div>
-            <div class="space-y-2">
-                <div class="flex justify-between items-center bg-amber-900/20 p-2.5 rounded-lg border border-amber-700/30">
-                    <span class="text-amber-400 font-bold text-xs">✨ ALTIN (400+)</span> 
-                    <span class="text-white font-mono">${goldCount} <span class="text-slate-500">(%${(goldCount/count*100).toFixed(0)})</span></span>
-                </div>
-                <div class="flex justify-between items-center bg-slate-700/30 p-2.5 rounded-lg border border-slate-600/30">
-                    <span class="text-slate-300 font-bold text-xs">⛓️ GÜMÜŞ (300-399)</span> 
-                    <span class="text-white font-mono">${silverCount} <span class="text-slate-500">(%${(silverCount/count*100).toFixed(0)})</span></span>
-                </div>
-                <div class="flex justify-between items-center bg-orange-900/20 p-2.5 rounded-lg border border-orange-700/30">
-                    <span class="text-orange-400 font-bold text-xs">📦 BRONZ (&lt;300)</span> 
-                    <span class="text-white font-mono">${bronzeCount} <span class="text-slate-500">(%${(bronzeCount/count*100).toFixed(0)})</span></span>
-                </div>
-            </div>
-        `;
-        resultsDiv.classList.remove('hidden');
-    }
-
-    async function playSingleGame() {
-        let tempState = { hand: [], deckCount: 24, score: 0, usedCards: [], turns: 0 };
-        
-        function simDraw(cnt) {
-            let av = [];
-            for(let i=0; i<24; i++) if(!tempState.usedCards.includes(i)) av.push(i);
-            av.sort(() => Math.random() - 0.5);
-            av.slice(0, cnt).forEach(id => {
-                tempState.hand.push({ id: id, color: Math.floor(id/8), val: (id%8)+1 });
-                tempState.usedCards.push(id);
-            });
-            tempState.deckCount = Math.max(0, tempState.deckCount - cnt);
-        }
-        simDraw(5);
-
-        let originalState = JSON.parse(JSON.stringify(state));
-        state = tempState; 
-
-        while(true) {
-            if (state.hand.length === 0) break;
-            const canSet = ALL_SETS.some(s => s.ids.every(id => state.hand.some(c => c.id === id)));
-            if (state.deckCount === 0 && !canSet) break;
-
-            const actionIdx = await askAI(true); 
-            if (actionIdx === -1) break;
-
-            if (actionIdx < 24) {
-                state.hand = state.hand.filter(x => x.id !== actionIdx);
-                state.turns++;
-                if(state.deckCount > 0) simDraw(1);
-            } else {
-                const setIdx = actionIdx - 24;
-                const setInfo = ALL_SETS[setIdx];
-                state.score += setInfo.score;
-                state.hand = state.hand.filter(x => !setInfo.ids.includes(x.id));
-                state.turns++;
-                const drawNeed = Math.min(3, state.deckCount);
-                if(drawNeed > 0) simDraw(drawNeed);
+            // Python: else: (hem kart atma hem set yapma)
+            for (const c of this.hand) {
+                actions.push(c);
+            }
+            for (let i = 0; i < ALL_SETS.length; i++) {
+                if (ALL_SETS[i].ids.every(c => handSet.has(c))) {
+                    actions.push(24 + i);
+                }
             }
         }
         
-        const finalScore = state.score;
-        state = originalState; 
-        return finalScore;
+        if (actions.length === 0) {
+            this.gameOver = true;
+        }
+        return actions;
+    }
+    
+    // Python: step(action)
+    step(action) {
+        this.turns++;
+        let reward = 0.0;
+        
+        if (action < 24) {
+            // Discard
+            const idx = this.hand.indexOf(action);
+            if (idx !== -1) {
+                if (this.deck.length === 0) {
+                    reward = -5.0;
+                    this.gameOver = true;
+                    return reward;
+                }
+                this.hand.splice(idx, 1);
+                if (this.deck.length > 0) {
+                    this.hand.push(this.deck.pop());
+                }
+                this.hand.sort((a,b) => a-b);
+            }
+        } else {
+            // Play Set
+            const setIdx = action - 24;
+            if (setIdx < ALL_SETS.length) {
+                const cards = ALL_SETS[setIdx].ids;
+                if (cards.every(c => this.hand.includes(c))) {
+                    for (const c of cards) {
+                        const idx = this.hand.indexOf(c);
+                        if (idx !== -1) this.hand.splice(idx, 1);
+                    }
+                    const pts = ALL_SETS[setIdx].score;
+                    this.score += pts;
+                    reward = pts / 100.0;
+                    
+                    for (let i = 0; i < 3 && this.deck.length > 0; i++) {
+                        this.hand.push(this.deck.pop());
+                    }
+                    this.hand.sort((a,b) => a-b);
+                }
+            }
+        }
+        
+        // Check game over
+        if (this.deck.length === 0) {
+            const handSet = new Set(this.hand);
+            const canPlay = ALL_SETS.some(s => s.ids.every(c => handSet.has(c)));
+            if (!canPlay) {
+                this.gameOver = true;
+            }
+        }
+        
+        return reward;
+    }
+    
+    // Python: get_observation()
+    getObservation() {
+        const obs = new Float32Array(4 * 3 * 8).fill(0);
+        
+        // Kanal 0: Elimdeki Kartlar
+        for (const c of this.hand) {
+            obs[0 * 24 + Math.floor(c/8) * 8 + (c%8)] = 1.0;
+        }
+        
+        // Kanal 1: Set İhtimal Haritası
+        const handSet = new Set(this.hand);
+        for (let i = 0; i < ALL_SETS.length; i++) {
+            if (ALL_SETS[i].ids.every(c => handSet.has(c))) {
+                const stype = ALL_SETS[i].type;
+                const heat = stype === 0 ? 1.0 : (stype === 1 ? 0.7 : 0.4);
+                for (const c of ALL_SETS[i].ids) {
+                    const idx = 1 * 24 + Math.floor(c/8) * 8 + (c%8);
+                    obs[idx] = Math.max(obs[idx], heat);
+                }
+            }
+        }
+        
+        // Kanal 2: Oyun Durumu
+        const gameState = (this.deck.length * 10 + this.score) / 600.0;
+        for (let i = 48; i < 72; i++) obs[i] = gameState;
+        
+        // Kanal 3: Turn Sayısı
+        const turnNorm = this.turns / 50.0;
+        for (let i = 72; i < 96; i++) obs[i] = turnNorm;
+        
+        return obs;
+    }
+    
+    // Python: get_final_reward()
+    getFinalReward() {
+        const s = this.score;
+        
+        if (s < 250) {
+            return -0.8 + (s / 250) * 0.4;
+        }
+        if (s < 300) {
+            return -0.4 + ((s - 250) / 50) * 0.4;
+        }
+        if (s < 400) {
+            return ((s - 300) / 100) * 0.5;
+        }
+        const bonus = Math.min((s - 400) / 150, 0.3);
+        return 0.7 + bonus;
+    }
+}
+
+// ==========================================
+// MCTS NODE (Python Node class ile birebir)
+// ==========================================
+class MCTSNode {
+    constructor(game, prior = 0) {
+        this.game = game;
+        this.prior = prior;
+        this.visits = 0;
+        this.valueSum = 0;
+        this.children = {};
+        this.expanded = false;
+    }
+    
+    // Python: select()
+    select() {
+        let best = -Infinity;
+        let bestAct = -1;
+        let bestChild = null;
+        const sqrtN = Math.sqrt(this.visits);
+        
+        for (const [act, child] of Object.entries(this.children)) {
+            // Python: u = 2.0 * child.prior * sqrt_n / (1 + child.visits)
+            const u = C_PUCT * child.prior * sqrtN / (1 + child.visits);
+            // Python: q = child.value_sum / (child.visits + 1e-8)
+            const q = child.valueSum / (child.visits + 1e-8);
+            const score = q + u;
+            
+            if (score > best) {
+                best = score;
+                bestAct = parseInt(act);
+                bestChild = child;
+            }
+        }
+        return [bestAct, bestChild];
+    }
+    
+    // Python: expand(probs, actions)
+    expand(probs, actions) {
+        let sumP = 0;
+        for (const a of actions) sumP += probs[a];
+        sumP += 1e-8;
+        
+        for (const a of actions) {
+            const nGame = this.game.clone();
+            nGame.step(a);
+            this.children[a] = new MCTSNode(nGame, probs[a] / sumP);
+        }
+        this.expanded = true;
+    }
+}
+
+// ==========================================
+// DIRICHLET NOISE (Python ile aynı)
+// ==========================================
+function dirichletSample(n, alpha) {
+    // Gamma distribution'dan sample al ve normalize et
+    const samples = [];
+    let sum = 0;
+    for (let i = 0; i < n; i++) {
+        // Gamma(alpha, 1) yaklaşımı
+        let sample = 0;
+        for (let j = 0; j < Math.ceil(alpha * 10); j++) {
+            sample -= Math.log(Math.random());
+        }
+        sample = sample * alpha / Math.ceil(alpha * 10);
+        samples.push(sample);
+        sum += sample;
+    }
+    return samples.map(s => s / sum);
+}
+
+// ==========================================
+// MCTS RUN (Python MCTS.run() ile birebir)
+// ==========================================
+async function runMCTS(gameState, sims, temp = 0) {
+    if (!onnxSession) return -1;
+    
+    const root = new MCTSNode(gameState.clone());
+    
+    // Neural network'ten policy al
+    const obs = gameState.getObservation();
+    const tensor = new ort.Tensor('float32', obs, [1, 4, 3, 8]);
+    const results = await onnxSession.run({ input: tensor });
+    const logits = Array.from(results.policy.data);
+    
+    // Softmax (Python: torch.softmax)
+    const maxLogit = Math.max(...logits);
+    let expSum = 0;
+    const expVals = logits.map(l => {
+        const e = Math.exp(l - maxLogit);
+        expSum += e;
+        return e;
+    });
+    let probs = expVals.map(e => e / expSum);
+    
+    // Valid actions
+    const validActions = gameState.getValidActions();
+    if (validActions.length === 0) return -1;
+    if (validActions.length === 1) return validActions[0];
+    
+    // Python: mask = np.zeros_like(probs) ... probs = probs * mask
+    const mask = new Array(probs.length).fill(0);
+    for (const a of validActions) mask[a] = 1.0;
+    probs = probs.map((p, i) => p * mask[i]);
+    
+    // Normalize
+    let probSum = probs.reduce((a, b) => a + b, 0);
+    if (probSum > 0) {
+        probs = probs.map(p => p / probSum);
+    } else {
+        const maskSum = mask.reduce((a, b) => a + b, 0);
+        probs = mask.map(m => m / maskSum);
+    }
+    
+    // Python: Dirichlet Noise (sadece temp > 0.5 ise)
+    // Web'de inference için temp=0 kullanıyoruz, noise ekleMİYORUZ
+    // Bu, eğitimdeki "exploitation" fazına karşılık gelir
+    
+    // Root'u expand et
+    root.expand(probs, validActions);
+    
+    // Simülasyonları çalıştır
+    for (let sim = 0; sim < sims; sim++) {
+        let node = root;
+        const path = [node];
+        
+        // Selection: expanded ve children varsa devam et
+        while (node.expanded && Object.keys(node.children).length > 0) {
+            const [action, child] = node.select();
+            node = child;
+            path.push(node);
+        }
+        
+        // Evaluation
+        let val = 0.0;
+        if (node.game.gameOver) {
+            // Python: val = node.game.get_final_reward()
+            val = node.game.getFinalReward();
+        } else {
+            // Neural network'ten value al
+            const nodeObs = node.game.getObservation();
+            const nodeTensor = new ort.Tensor('float32', nodeObs, [1, 4, 3, 8]);
+            const nodeResults = await onnxSession.run({ input: nodeTensor });
+            
+            // Policy için softmax
+            const nodeLogits = Array.from(nodeResults.policy.data);
+            const nodeMaxLogit = Math.max(...nodeLogits);
+            let nodeExpSum = 0;
+            const nodeExpVals = nodeLogits.map(l => {
+                const e = Math.exp(l - nodeMaxLogit);
+                nodeExpSum += e;
+                return e;
+            });
+            const nodeProbs = nodeExpVals.map(e => e / nodeExpSum);
+            
+            // Value
+            val = nodeResults.value.data[0];
+            
+            // Expand
+            const nodeValidActions = node.game.getValidActions();
+            if (nodeValidActions.length > 0) {
+                node.expand(nodeProbs, nodeValidActions);
+            }
+        }
+        
+        // Backpropagation
+        for (const n of path) {
+            n.visits++;
+            n.valueSum += val;
+        }
+        
+        // UI responsiveness
+        if (sim % 100 === 0 && sim > 0) {
+            await new Promise(r => setTimeout(r, 0));
+        }
+    }
+    
+    // Action seçimi
+    const counts = [];
+    const actions = [];
+    for (const [act, child] of Object.entries(root.children)) {
+        actions.push(parseInt(act));
+        counts.push(child.visits);
+    }
+    
+    if (temp === 0) {
+        // Python: best = np.argmax(counts)
+        const bestIdx = counts.indexOf(Math.max(...counts));
+        return actions[bestIdx];
+    } else {
+        // Python: counts = counts ** (1.0 / temp)
+        const tempCounts = counts.map(c => Math.pow(c, 1.0 / temp));
+        const tempSum = tempCounts.reduce((a, b) => a + b, 0);
+        const tempProbs = tempCounts.map(c => c / tempSum);
+        
+        // Random choice
+        const r = Math.random();
+        let cumsum = 0;
+        for (let i = 0; i < actions.length; i++) {
+            cumsum += tempProbs[i];
+            if (r < cumsum) return actions[i];
+        }
+        return actions[actions.length - 1];
+    }
+}
+
+// ==========================================
+// ASK AI (UI integration)
+// ==========================================
+async function askAI(returnMove = false) {
+    if (!onnxSession) return -1;
+    
+    const mctsSims = parseInt(document.getElementById('mctsSlider').value);
+    
+    if (!isSimulationRunning && !returnMove) {
+        updateAIUI("Hesaplanıyor...", `MCTS ${mctsSims} simülasyon...`, true);
+        await new Promise(r => setTimeout(r, 20));
+    }
+    
+    // GameState oluştur
+    const gameState = GameState.fromUIState(state);
+    
+    // MCTS çalıştır (temp=0 -> exploitation mode)
+    const bestAction = await runMCTS(gameState, mctsSims, 0);
+    
+    if (returnMove) return bestAction;
+    
+    updateAIUI("Analiz Tamam", "En iyi hamle bulundu.", false);
+    renderHand();
+    
+    const btn = document.getElementById('executeBtn');
+    
+    if (bestAction < 24) {
+        const c = getCardObj(bestAction);
+        updateAIUI("KART AT", `Bu kartı elden çıkar`, false, `${c.val} ${getColorEmoji(c.color)}`);
+        highlightCards([bestAction], 'discard');
+        
+        btn.onclick = () => {
+            state.hand = state.hand.filter(x => x.id !== bestAction);
+            state.turns++;
+            document.getElementById('aiPanel').classList.add('hidden');
+            renderHand();
+            nextTurn(1);
+        };
+    } else {
+        const setIdx = bestAction - 24;
+        const setInfo = ALL_SETS[setIdx];
+        const cardsStr = setInfo.ids.map(id => {
+            const c = getCardObj(id);
+            return `${c.val}${getColorEmoji(c.color)}`;
+        }).join(" ");
+        
+        updateAIUI("SET YAP", `${setInfo.typeName} (+${setInfo.score} Puan)`, false, cardsStr);
+        highlightCards(setInfo.ids, 'keep');
+        
+        btn.onclick = () => {
+            state.score += setInfo.score;
+            state.hand = state.hand.filter(x => !setInfo.ids.includes(x.id));
+            state.turns++;
+            document.getElementById('aiPanel').classList.add('hidden');
+            renderHand();
+            const drawNeed = Math.min(3, state.deckCount);
+            if (drawNeed > 0) nextTurn(drawNeed);
+            else checkEndGame();
+        };
+    }
+}
+
+function updateAIUI(title, desc, loading, details = "") {
+    const panel = document.getElementById('aiPanel');
+    const tEl = document.getElementById('aiTitle');
+    const dEl = document.getElementById('aiDesc');
+    const detEl = document.getElementById('aiDetails');
+    const btn = document.getElementById('executeBtn');
+    const icon = document.getElementById('aiIcon');
+    const spinner = document.getElementById('aiSpinner');
+
+    panel.classList.remove('hidden');
+    tEl.childNodes[0].textContent = title + " ";
+    dEl.innerText = desc;
+    detEl.innerText = details;
+
+    if (loading) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        tEl.className = "text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2";
+        icon.textContent = "🔮";
+        spinner.classList.remove('hidden');
+    } else {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        spinner.classList.add('hidden');
+        
+        if (title.includes("AT")) {
+            tEl.className = "text-sm font-bold text-red-400 uppercase tracking-wider flex items-center gap-2";
+            icon.textContent = "🗑️";
+            panel.classList.remove('border-l-amber-500', 'border-l-green-500');
+            panel.classList.add('border-l-red-500');
+        } else if (title.includes("SET")) {
+            tEl.className = "text-sm font-bold text-green-400 uppercase tracking-wider flex items-center gap-2";
+            icon.textContent = "⭐";
+            panel.classList.remove('border-l-amber-500', 'border-l-red-500');
+            panel.classList.add('border-l-green-500');
+        } else {
+            tEl.className = "text-sm font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2";
+            icon.textContent = "🔮";
+            panel.classList.remove('border-l-red-500', 'border-l-green-500');
+            panel.classList.add('border-l-amber-500');
+        }
+    }
+}
+
+// ==========================================
+// GAME MANAGEMENT
+// ==========================================
+function resetGameUI() {
+    clearTimeout(gameLoopTimeout);
+    state = { hand: [], deckCount: 24, score: 0, usedCards: [], turns: 0 };
+    document.getElementById('aiPanel').classList.add('hidden');
+    updateBars();
+    const handDiv = document.getElementById('myHand');
+    handDiv.innerHTML = `
+        <button onclick="openPicker(5)" class="mt2-btn-primary px-10 py-5 rounded-2xl font-bold text-white shadow-2xl tracking-widest text-base flex items-center gap-3 hover:scale-105 transition-transform">
+            <span class="text-2xl">🎴</span> OYUNU BAŞLAT
+        </button>
+    `;
+}
+
+function nextTurn(drawCount) {
+    if (isSimulationRunning) return;
+    if (state.deckCount > 0) openPicker(drawCount);
+    else checkEndGame();
+}
+
+// ==========================================
+// HELPERS
+// ==========================================
+function getCardObj(id) { return { id: id, color: Math.floor(id / 8), val: (id % 8) + 1 }; }
+function getColorClass(c) { return ['y', 'b', 'r'][c]; }
+function getColorEmoji(c) { return ['💛', '💙', '❤️'][c]; }
+
+function renderHand() {
+    if (isSimulationRunning) return;
+    const div = document.getElementById('myHand');
+    div.innerHTML = '';
+    state.hand.sort((a, b) => a.id - b.id).forEach(c => {
+        const el = document.createElement('div');
+        el.className = `card ${getColorClass(c.color)}`;
+        el.innerText = c.val;
+        el.dataset.id = c.id;
+        div.appendChild(el);
+    });
+    document.getElementById('scoreDisplay').innerText = state.score;
+    document.getElementById('deckDisplay').innerText = state.deckCount;
+    updateBars();
+}
+
+function highlightCards(targetIds, type) {
+    if (isSimulationRunning) return;
+    const allCards = document.querySelectorAll('#myHand .card');
+    allCards.forEach(c => c.classList.remove('suggest-keep', 'suggest-discard', 'opacity-dim'));
+    targetIds.forEach(id => {
+        const el = document.querySelector(`#myHand .card[data-id="${id}"]`);
+        if (el) {
+            if (type === 'discard') el.classList.add('suggest-discard');
+            else el.classList.add('suggest-keep');
+        }
+    });
+    if (type === 'keep') {
+        allCards.forEach(c => {
+            if (!c.classList.contains('suggest-keep') && !c.classList.contains('suggest-discard')) {
+                c.classList.add('opacity-dim');
+            }
+        });
+    }
+}
+
+function canAnySetBeMade() {
+    return ALL_SETS.some(s => s.ids.every(id => state.hand.some(c => c.id === id)));
+}
+
+// ==========================================
+// CARD PICKER
+// ==========================================
+let pickerSelection = [];
+let pickerTarget = 0;
+
+function drawRandomCards(count) {
+    let availableIds = [];
+    for (let i = 0; i < 24; i++) if (!state.usedCards.includes(i)) availableIds.push(i);
+    for (let i = availableIds.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [availableIds[i], availableIds[j]] = [availableIds[j], availableIds[i]];
+    }
+    availableIds.slice(0, count).forEach(id => {
+        state.hand.push(getCardObj(id));
+        state.usedCards.push(id);
+    });
+    state.deckCount = Math.max(0, state.deckCount - count);
+    if (!isSimulationRunning) {
+        renderHand();
+        gameLoopTimeout = setTimeout(askAI, 300);
+    }
+}
+
+function openPicker(count) {
+    const isAuto = document.getElementById('autoDrawToggle').checked;
+    if (isAuto) { drawRandomCards(count); return; }
+
+    pickerTarget = count;
+    pickerSelection = [];
+    const modal = document.getElementById('pickerModal');
+    const grid = document.getElementById('pickerGrid');
+    const title = document.getElementById('pickerTitle');
+    
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10);
+
+    title.innerText = `${count} KART SEÇ`;
+    grid.innerHTML = '';
+    
+    for (let i = 0; i < 24; i++) {
+        const c = getCardObj(i);
+        const isUnavailable = state.usedCards.includes(i);
+        const el = document.createElement('div');
+        el.className = `card ${getColorClass(c.color)} text-xs h-12 w-full`;
+        el.innerText = c.val;
+        
+        if (isUnavailable) {
+            el.classList.add('taken');
+        } else {
+            el.onclick = () => {
+                if (el.classList.contains('selected')) {
+                    el.classList.remove('selected');
+                    pickerSelection = pickerSelection.filter(x => x !== i);
+                } else if (pickerSelection.length < pickerTarget) {
+                    el.classList.add('selected');
+                    pickerSelection.push(i);
+                }
+                updatePickerBtn();
+            };
+        }
+        grid.appendChild(el);
+    }
+    updatePickerBtn();
+}
+
+function closeModal(id) {
+    const m = document.getElementById(id);
+    m.classList.remove('show');
+    setTimeout(() => m.style.display = 'none', 300);
+}
+
+function updatePickerBtn() {
+    const btn = document.getElementById('pickerConfirm');
+    btn.innerText = `SEÇİMİ TAMAMLA (${pickerSelection.length}/${pickerTarget})`;
+    if (pickerSelection.length === pickerTarget) {
+        btn.disabled = false;
+        btn.classList.remove('bg-slate-700', 'text-slate-500', 'cursor-not-allowed');
+        btn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-500');
+        btn.onclick = () => {
+            pickerSelection.forEach(id => {
+                state.hand.push(getCardObj(id));
+                state.usedCards.push(id);
+            });
+            state.deckCount = Math.max(0, state.deckCount - pickerTarget);
+            closeModal('pickerModal');
+            renderHand();
+            askAI();
+        };
+    } else {
+        btn.disabled = true;
+        btn.classList.add('bg-slate-700', 'text-slate-500', 'cursor-not-allowed');
+        btn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-500');
+    }
+}
+
+// ==========================================
+// SIMULATION
+// ==========================================
+function openSimModal() {
+    document.getElementById('simModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('simModal').classList.add('show'), 10);
+}
+function closeSimModal() { closeModal('simModal'); }
+
+async function startSimulation() {
+    if (!onnxSession) { showToast("Model hazır değil!", 'error'); return; }
+    
+    const count = parseInt(document.getElementById('simCount').value);
+    if (count < 1 || count > 50) { showToast("1-50 arası oyun seçin", 'warning'); return; }
+
+    isSimulationRunning = true;
+    document.getElementById('startSimBtn').disabled = true;
+    document.getElementById('simProgress').classList.remove('hidden');
+    document.getElementById('simResults').classList.add('hidden');
+
+    let totalScore = 0;
+    let silverCount = 0;
+    let goldCount = 0;
+    let bronzeCount = 0;
+
+    for (let i = 0; i < count; i++) {
+        const pct = Math.round(((i) / count) * 100);
+        document.getElementById('simProgressBar').style.width = `${pct}%`;
+        document.getElementById('simProgressText').innerText = `${i + 1}/${count}`;
+        
+        const gameScore = await playSingleGame();
+        totalScore += gameScore;
+        
+        if (gameScore >= 400) goldCount++;
+        else if (gameScore >= 300) silverCount++;
+        else bronzeCount++;
+        
+        await new Promise(r => setTimeout(r, 10));
     }
 
-    // ==========================================
-    // GAME END
-    // ==========================================
-    function checkEndGame() {
-        if (isSimulationRunning) return; 
+    isSimulationRunning = false;
+    document.getElementById('simProgressBar').style.width = `100%`;
+    document.getElementById('startSimBtn').disabled = false;
+    
+    const avg = (totalScore / count).toFixed(1);
+    const resultsDiv = document.getElementById('simResults');
+    resultsDiv.innerHTML = `
+        <div class="flex justify-between border-b border-slate-700 pb-2 mb-3">
+            <span class="text-slate-500">Oyun Sayısı</span> 
+            <span class="text-white font-bold">${count}</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-700 pb-2 mb-3">
+            <span class="text-slate-500">Ortalama Skor</span> 
+            <span class="text-amber-400 font-bold text-lg">${avg}</span>
+        </div>
+        <div class="space-y-2">
+            <div class="flex justify-between items-center bg-amber-900/20 p-2.5 rounded-lg border border-amber-700/30">
+                <span class="text-amber-400 font-bold text-xs">✨ ALTIN (400+)</span> 
+                <span class="text-white font-mono">${goldCount} <span class="text-slate-500">(%${(goldCount / count * 100).toFixed(0)})</span></span>
+            </div>
+            <div class="flex justify-between items-center bg-slate-700/30 p-2.5 rounded-lg border border-slate-600/30">
+                <span class="text-slate-300 font-bold text-xs">⛓️ GÜMÜŞ (300-399)</span> 
+                <span class="text-white font-mono">${silverCount} <span class="text-slate-500">(%${(silverCount / count * 100).toFixed(0)})</span></span>
+            </div>
+            <div class="flex justify-between items-center bg-orange-900/20 p-2.5 rounded-lg border border-orange-700/30">
+                <span class="text-orange-400 font-bold text-xs">📦 BRONZ (&lt;300)</span> 
+                <span class="text-white font-mono">${bronzeCount} <span class="text-slate-500">(%${(bronzeCount / count * 100).toFixed(0)})</span></span>
+            </div>
+        </div>
+    `;
+    resultsDiv.classList.remove('hidden');
+}
 
-        if(state.hand.length === 0) {
-            finishGame("Elindeki kartlar bitti!");
+async function playSingleGame() {
+    const mctsSims = parseInt(document.getElementById('mctsSlider').value);
+    
+    // Yeni oyun oluştur
+    const game = new GameState();
+    game.deck = [];
+    for (let i = 0; i < 24; i++) game.deck.push(i);
+    
+    // Shuffle
+    for (let i = game.deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [game.deck[i], game.deck[j]] = [game.deck[j], game.deck[i]];
+    }
+    
+    // 5 kart çek
+    for (let i = 0; i < 5; i++) {
+        game.hand.push(game.deck.pop());
+    }
+    game.hand.sort((a, b) => a - b);
+    
+    // Oyunu oyna
+    while (!game.gameOver) {
+        const validActions = game.getValidActions();
+        if (validActions.length === 0) break;
+        
+        const action = await runMCTS(game, mctsSims, 0);
+        if (action === -1) break;
+        
+        game.step(action);
+    }
+    
+    return game.score;
+}
+
+// ==========================================
+// GAME END
+// ==========================================
+function checkEndGame() {
+    if (isSimulationRunning) return;
+
+    if (state.hand.length === 0) {
+        finishGame("Elindeki kartlar bitti!");
+        return;
+    }
+    if (state.deckCount === 0) {
+        if (!canAnySetBeMade()) {
+            finishGame("Deste bitti ve yapılacak hamle kalmadı!");
             return;
         }
-        if (state.deckCount === 0) {
-            if (!canAnySetBeMade()) {
-                finishGame("Deste bitti ve yapılacak hamle kalmadı!");
-                return;
-            }
-        }
-        renderHand();
-        gameLoopTimeout = setTimeout(askAI, 500); 
     }
+    renderHand();
+    gameLoopTimeout = setTimeout(askAI, 500);
+}
 
-    function finishGame(msg) {
-        const modal = document.getElementById('endModal');
-        const icon = document.getElementById('endIcon');
-        const title = document.getElementById('endTitle');
-        const reason = document.getElementById('endReason');
-        const score = document.getElementById('endScore');
-        const reward = document.getElementById('endReward');
-        
-        reason.textContent = msg;
-        score.textContent = state.score;
-        
-        if(state.score >= 400) {
-            icon.textContent = "✨";
-            icon.className = "result-icon result-gold";
-            title.textContent = "MÜKEMMEL!";
-            reward.innerHTML = "🏆 <span class='text-amber-300'>ALTIN SANDIK</span>";
-        } else if(state.score >= 300) {
-            icon.textContent = "⛓️";
-            icon.className = "result-icon result-silver";
-            title.textContent = "İYİ OYUN!";
-            reward.innerHTML = "🥈 <span class='text-slate-300'>GÜMÜŞ SANDIK</span>";
-        } else {
-            icon.textContent = "📦";
-            icon.className = "result-icon result-bronze";
-            title.textContent = "OYUN BİTTİ";
-            reward.innerHTML = "📦 <span class='text-orange-400'>BRONZ SANDIK</span>";
-        }
-        
-        modal.style.display = 'flex';
-        setTimeout(() => modal.classList.add('show'), 10);
+function finishGame(msg) {
+    const modal = document.getElementById('endModal');
+    const icon = document.getElementById('endIcon');
+    const title = document.getElementById('endTitle');
+    const reason = document.getElementById('endReason');
+    const score = document.getElementById('endScore');
+    const reward = document.getElementById('endReward');
+    
+    reason.textContent = msg;
+    score.textContent = state.score;
+    
+    if (state.score >= 400) {
+        icon.textContent = "✨";
+        icon.className = "result-icon result-gold";
+        title.textContent = "MÜKEMMEL!";
+        reward.innerHTML = "🏆 <span class='text-amber-300'>ALTIN SANDIK</span>";
+    } else if (state.score >= 300) {
+        icon.textContent = "⛓️";
+        icon.className = "result-icon result-silver";
+        title.textContent = "İYİ OYUN!";
+        reward.innerHTML = "🥈 <span class='text-slate-300'>GÜMÜŞ SANDIK</span>";
+    } else {
+        icon.textContent = "📦";
+        icon.className = "result-icon result-bronze";
+        title.textContent = "OYUN BİTTİ";
+        reward.innerHTML = "📦 <span class='text-orange-400'>BRONZ SANDIK</span>";
     }
+    
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10);
+}
 
-    function closeEndModal() {
-        closeModal('endModal');
-        resetGameUI();
-    }
+function closeEndModal() {
+    closeModal('endModal');
+    resetGameUI();
+}
 </script>
 </body>
 </html>

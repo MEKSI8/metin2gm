@@ -574,7 +574,7 @@
     // ==========================================
     // STATE
     // ==========================================
-    let state = { hand: [], deckCount: 24, score: 0, usedCards: [] };
+    let state = { hand: [], deckCount: 24, score: 0, usedCards: [], turns: 0 };
     let onnxSession = null;
     let isSimulationRunning = false;
     let gameLoopTimeout = null;
@@ -678,7 +678,7 @@
     // ==========================================
     function resetGameUI() {
         clearTimeout(gameLoopTimeout);
-        state = { hand: [], deckCount: 24, score: 0, usedCards: [] };
+        state = { hand: [], deckCount: 24, score: 0, usedCards: [], turns: 0 };
         document.getElementById('aiPanel').classList.add('hidden');
         updateBars();
         renderHand(); 
@@ -727,6 +727,7 @@
             
             btn.onclick = () => {
                 state.hand = state.hand.filter(x => x.id !== bestAction);
+                state.turns++;
                 document.getElementById('aiPanel').classList.add('hidden');
                 renderHand();
                 nextTurn(1); 
@@ -745,6 +746,7 @@
             btn.onclick = () => {
                 state.score += setInfo.score;
                 state.hand = state.hand.filter(x => !setInfo.ids.includes(x.id));
+                state.turns++;
                 document.getElementById('aiPanel').classList.add('hidden');
                 renderHand();
                 const drawNeed = Math.min(3, state.deckCount);
@@ -824,12 +826,14 @@
                 
                 if(move < 24) { 
                     simState.hand = simState.hand.filter(c => c.id !== move);
+                    simState.turns++;
                     if(simState.deckCount > 0) simulateDraw(simState, 1);
                 } else { 
                     let setInfo = ALL_SETS[move-24];
                     immediateScore = setInfo.score;
                     simState.score += immediateScore;
                     simState.hand = simState.hand.filter(c => !setInfo.ids.includes(c.id));
+                    simState.turns++;
                     let draw = Math.min(3, simState.deckCount);
                     if(draw > 0) simulateDraw(simState, draw);
                 }
@@ -896,24 +900,46 @@
     }
 
     function createStateTensor(inpState) {
+        // 4 kanal x 3 renk x 8 değer = 96 eleman
         const data = new Float32Array(4 * 3 * 8).fill(0);
         
-        // Channel 0: Hand
+        // === KANAL 0: Elimdeki Kartlar ===
+        // Eğitimdeki: obs[0, c//8, c%8] = 1.0
+        // c//8 = color (0,1,2), c%8 = value (0-7)
         inpState.hand.forEach(c => { 
+            // Tensor düzeni: [channel][color][value] -> flat index = channel*24 + color*8 + value
             const idx = 0*24 + c.color*8 + (c.val-1); 
             data[idx] = 1.0; 
         });
         
-        // Channel 1: Deck normalized
-        const dN = inpState.deckCount / 24.0;
-        for(let i=24; i<48; i++) data[i] = dN;
+        // === KANAL 1: Set İhtimal Haritası (Heatmap) ===
+        // Eğitimdeki gibi: yapılabilir setlerdeki kartları işaretle
+        const handIds = new Set(inpState.hand.map(c => c.id));
+        ALL_SETS.forEach((setInfo, i) => {
+            if (setInfo.ids.every(id => handIds.has(id))) {
+                // Set tipi: Renk Sıralı=1.0, Aynı Sayı=0.7, Farklı Renk=0.4
+                let heat = 0.4;
+                if (setInfo.type === 'Renk Sıralı') heat = 1.0;
+                else if (setInfo.type === 'Aynı Sayı') heat = 0.7;
+                
+                setInfo.ids.forEach(cardId => {
+                    const color = Math.floor(cardId / 8);
+                    const value = cardId % 8;
+                    const idx = 1*24 + color*8 + value;
+                    data[idx] = Math.max(data[idx], heat);
+                });
+            }
+        });
         
-        // Channel 2: Score normalized
-        const sN = Math.min(inpState.score, 600) / 600.0;
-        for(let i=48; i<72; i++) data[i] = sN;
+        // === KANAL 2: Oyun Durumu (Deste*10 + Skor) / 600 ===
+        // Eğitimdeki: obs[2, :, :] = (len(self.deck) * 10 + self.score) / 600.0
+        const gameState = (inpState.deckCount * 10 + inpState.score) / 600.0;
+        for(let i=48; i<72; i++) data[i] = gameState;
         
-        // Channel 3: Constant (turns info placeholder)
-        for(let i=72; i<96; i++) data[i] = 1.0;
+        // === KANAL 3: Turn Sayısı ===
+        // Eğitimdeki: obs[3, :, :] = self.turns / 50.0
+        const turnNorm = (inpState.turns || 0) / 50.0;
+        for(let i=72; i<96; i++) data[i] = turnNorm;
         
         return new ort.Tensor('float32', data, [1, 4, 3, 8]);
     }
@@ -1129,7 +1155,7 @@
     }
 
     async function playSingleGame() {
-        let tempState = { hand: [], deckCount: 24, score: 0, usedCards: [] };
+        let tempState = { hand: [], deckCount: 24, score: 0, usedCards: [], turns: 0 };
         
         function simDraw(cnt) {
             let av = [];
@@ -1156,12 +1182,14 @@
 
             if (actionIdx < 24) {
                 state.hand = state.hand.filter(x => x.id !== actionIdx);
+                state.turns++;
                 if(state.deckCount > 0) simDraw(1);
             } else {
                 const setIdx = actionIdx - 24;
                 const setInfo = ALL_SETS[setIdx];
                 state.score += setInfo.score;
                 state.hand = state.hand.filter(x => !setInfo.ids.includes(x.id));
+                state.turns++;
                 const drawNeed = Math.min(3, state.deckCount);
                 if(drawNeed > 0) simDraw(drawNeed);
             }

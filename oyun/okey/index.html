@@ -242,7 +242,7 @@
             </svg>
             <div class="model-badge">
                 <span class="dot"></span>
-                <span>v3.1 • e2460</span>
+                <span>v3.1 • e7830</span>
             </div>
         </div>
         
@@ -421,7 +421,7 @@
 
 const COLORS = ['y', 'b', 'r'];
 const ALL_SETS = generateSets();
-const MODEL_VERSION = "e2460";
+const MODEL_VERSION = "e7830";
 
 // Python'daki sabitler
 const C_PUCT = 2.0;  // Python: u = 2.0 * child.prior * sqrt_n / (1 + child.visits)
@@ -516,7 +516,7 @@ function generateSets() {
 // ==========================================
 async function initAI() {
     try {
-        onnxSession = await ort.InferenceSession.create('./mt2_e2460.onnx');
+        onnxSession = await ort.InferenceSession.create('./mt2_e7830.onnx');
         console.log(`✅ AI Hazır! Model: ${MODEL_VERSION}`);
         showToast(`AI Yüklendi (${MODEL_VERSION})`, 'success');
     } catch (e) {
